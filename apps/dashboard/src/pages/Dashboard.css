@@ -1,0 +1,65 @@
+.dashboard-empty {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  .dashboard-empty img {
+    max-width: 280px;
+    margin-bottom: 28px;
+    opacity: 0.9;
+  }
+  
+  .subtle-text {
+    font-size: 0.95rem;
+    color: var(--color-text-muted, #888);
+    margin-bottom: 20px;
+    max-width: 320px;
+  }
+  
+  .dashboard-empty button {
+    padding: 10px 24px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600; /* Bold */
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.page-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 12vh; /* 👈 Each "height unit" is 12% of viewport height */
+  gap: 20px;
+  max-width: 1400px;
+  width: 100%;
+}

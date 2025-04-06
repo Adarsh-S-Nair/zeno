@@ -1,0 +1,81 @@
+.dashboard-card {
+  height: 100%; /* 👈 Make card fill the row height */
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  background-color: var(--color-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+  
+.card-inner {
+  position: relative;
+  height: 100%;
+  background-color: var(--color-inner-card);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden; /* 👈 Clip the background chart */
+}
+  
+.card-inner h3 {
+  margin: 0px;
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.kpi-change {
+  font-size: 0.75rem;
+  padding: 5px 10px; /* 💡 Slightly more padding */
+  border-radius: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+
+.kpi-change.positive {
+  background-color: var(--color-positive-bg);
+  color: var(--color-positive-text);
+}
+
+.kpi-change.negative {
+  background-color: var(--color-negative-bg);
+  color: var(--color-negative-text);
+}
+
+.kpi-value-wrapper {
+  z-index: 2;
+  position: relative;
+}
+
+.kpi-value {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.kpi-trend-behind {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 1;
+  opacity: 0.15;
+  pointer-events: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding-right: 12px;
+}

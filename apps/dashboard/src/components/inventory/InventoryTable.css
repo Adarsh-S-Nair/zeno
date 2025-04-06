@@ -1,0 +1,56 @@
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.inventory-table {
+  position: relative;
+}
+
+.inventory-empty-state {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.inventory-empty-state img {
+  max-width: 160px;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.ag-cell {
+  padding: 12px 8px;
+  font-size: 0.9rem;
+}
+
+.status-active {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.status-outofstock {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.status-onhold {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  background: var(--color-muted);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}

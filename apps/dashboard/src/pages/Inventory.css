@@ -1,0 +1,253 @@
+.inventory-page {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  height: 100vh; /* Full height viewport */
+}
+
+.page-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  align-items: start;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.inventory-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.inventory-card {
+  background-color: var(--color-card);
+  border-radius: 12px;
+  padding: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px; /* or whatever fits your layout */
+}
+
+.inventory-inner-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-inner-card);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.empty-state {
+  height: 851px; /* 👈 matches full-table height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.empty-state img {
+  width: 100px;
+  opacity: 0.5;
+}
+
+.primary-btn {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;                 /* 👈 LOCKED width */
+  height: 24px;                 /* Consistent height */
+  padding: 0 12px;              /* Still keeps text comfy */
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.status-tag.in-stock {
+  background-color: var(--color-positive-bg);
+  color: var(--color-positive-text);
+}
+
+.status-tag.low-on-stock {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.status-tag.out-of-stock {
+  background-color: var(--color-negative-bg);
+  color: var(--color-negative-text);
+}
+
+.action-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  transition: opacity 0.2s ease;
+  z-index: 5;
+}
+
+.action-icon-btn:hover {
+  opacity: 0.6;
+}
+
+.action-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.button-row {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.btn-muted.import-btn {
+  background-color: var(--color-muted);
+  color: var(--color-text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-muted.import-btn:hover {
+  background-color: var(--color-muted-hover);
+}
+
+.csv-drop-zone {
+  border: 2px dashed var(--color-muted);
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Only show dashed border and pointer when no file is present */
+.csv-drop-zone:not(:has(.file-details)) {
+  cursor: pointer;
+}
+
+/* Only show hover effects when no file is present */
+.csv-drop-zone:not(:has(.file-details)):hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-inner-card);
+}
+
+/* Remove border when file is present */
+.csv-drop-zone:has(.file-details) {
+  border: none;
+  padding: 0; /* Remove padding when file is present */
+}
+
+.file-details {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Reduced gap */
+  width: 100%;
+  padding: 12px; /* Adjusted padding */
+  cursor: default;
+  background-color: var(--color-inner-card);
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px; /* Slightly smaller */
+  height: 32px; /* Slightly smaller */
+  background-color: var(--color-inner-card);
+  border-radius: 6px;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.file-name {
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: left; /* Ensures left alignment */
+}
+
+.file-size {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-top: 2px;
+  text-align: left; /* Ensures left alignment */
+}
+
+.remove-file-btn {
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-muted);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text);
+  border-radius: 50%;
+}
+
+.remove-file-btn svg {
+  margin-top: 3px;
+}
+
+.remove-file-btn:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.csv-drop-zone p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem; /* Smaller text */
+  opacity: 0.7; /* Makes it more grayed out */
+}

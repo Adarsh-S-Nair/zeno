@@ -1,0 +1,17 @@
+.main-layout {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    padding-left: 60px; /* Same as collapsed sidebar width */
+    transition: padding-left 0.3s ease;
+  }
+  
+  .main-content {
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  
+.sidebar-container.open ~ .main-layout {
+    padding-left: 220px; /* Don't do this — we'll fix it differently */
+  }

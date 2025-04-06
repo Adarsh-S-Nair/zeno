@@ -1,0 +1,204 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.4); /* base darkness */
+  backdrop-filter: blur(6px);     /* frosted glass effect */
+  -webkit-backdrop-filter: blur(6px); /* for Safari */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: var(--color-card);
+  color: var(--color-text);
+  padding: 28px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.25s ease;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions.form-mode {
+  margin-top: 25px;
+}
+
+.modal-actions.non-form-mode {
+  margin-top: 25px;
+}
+
+
+.modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-error {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  margin: 0;
+  margin-left: 4px;
+  text-align: left;
+}
+
+/* ✅ Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-muted-text); /* Add this to globals if needed */
+  margin-bottom: 4px;
+}
+
+.form-modal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 48%;
+}
+
+.form-field.full {
+  flex: 1 1 100%;
+}
+
+.form-field.half {
+  flex-basis: calc(50% - 8px); /* 👈 half of row minus half the gap */
+}
+
+.form-field label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted-text);
+  margin-bottom: 8px;
+  text-align: left; /* ✅ ADD THIS */
+}
+
+.required-asterisk {
+  color: var(--color-error);
+  margin-left: 4px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  color: var(--color-text);
+}
+
+.input-wrapper.currency input {
+  padding-left: 22px; /* extra space for the $ */
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 9px;
+  top: 48.0%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--color-muted-text);
+  pointer-events: none;
+}
+
+.btn-danger {
+  background-color: var(--color-error);
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: var(--color-error-hover);
+}
+
+.csv-import-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.csv-upload-icon {
+  width: 120px;
+  opacity: 0.75;
+}
+
+.browse-btn {
+  font-weight: 600;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  background-color: var(--color-muted);
+  color: var(--color-text);
+  transition: background 0.2s ease;
+}
+
+.browse-btn:hover {
+  background-color: var(--color-muted-hover);
+}
+
+.filename {
+  font-size: 0.85rem;
+  color: var(--color-muted-text);
+  margin-top: -4px;
+}
