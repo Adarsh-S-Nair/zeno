@@ -1,6 +1,6 @@
-import './AuthForm.css'
+import '../styles/AuthForm.css'
 import { useState, useEffect } from 'react'
-import { supabase } from '../supabaseClient'
+import { supabase } from '../../../../apps/dashboard/src/supabaseClient'
 import { useNavigate } from 'react-router-dom'
 
 export default function AuthForm({ isLogin, setIsLogin }) {

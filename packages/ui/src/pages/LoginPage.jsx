@@ -1,10 +1,9 @@
-import './Login.css'
+import '../styles/LoginPage.css'
 import AuthForm from '../components/AuthForm'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../supabaseClient'
 
-export default function LoginPage() {
+export default function LoginPage({ supabase }) {
   const [isLogin, setIsLogin] = useState(true)
 
   const [checkingSession, setCheckingSession] = useState(true)

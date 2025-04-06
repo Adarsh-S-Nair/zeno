@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import LoginPage from './pages/Login'
+import { LoginPage } from '@zeno/ui'
 import Dashboard from './pages/Dashboard'
 import Inventory from './pages/Inventory'
 import MainLayout from './layout/MainLayout'
@@ -46,7 +46,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage supabase={supabase}/>} />
         <Route element={<MainLayout business={business} />}>
           <Route path="/dashboard"
             element={
