@@ -1,0 +1,42 @@
+/* src/styles/themes.css */
+:root {
+  --color-bg: #f6f8fa;         /* softer off-white */
+  --color-text: #4d4d4d;
+  --color-text-hover: #333333;
+  --color-primary: #4d8ef7;    /* modern light blue */
+  --color-card: #ffffff;
+  --color-inner-card: #fafafa;
+  --color-muted: #f0f2f5;
+  --color-shadow: rgba(0, 0, 0, 0.05);
+  --color-error: #e53935;
+  --color-disabled: #cccccc;
+  --color-primary-hover: #2563eb;
+  --color-muted-hover: #e8eaed;
+  --color-positive-bg: #dcfce7;
+  --color-positive-text: #15803d;
+  --color-negative-bg: #fee2e2;
+  --color-negative-text: #b91c1c;
+  --color-warning-bg: #fff3cd;
+  --color-warning-text: #856404;
+}
+
+[data-theme="dark"] {
+  --color-bg: #191919;         /* true grayish dark */
+  --color-text: #bcbcbc;
+  --color-text-hover: #818181;
+  --color-primary: #40639a;
+  --color-card: #1d1d1d;
+  --color-inner-card: #212121;
+  --color-muted: #303030;
+  --color-shadow: rgba(0, 0, 0, 0.5);
+  --color-error: #ef5350;
+  --color-disabled: #3f3f3f;
+  --color-primary-hover: #2f4a77;
+  --color-muted-hover: #2a2a2a;
+  --color-positive-bg: #23523e;
+  --color-positive-text: #75b178;
+  --color-negative-bg: #4e2121;
+  --color-negative-text: #db6161;
+  --color-warning-bg: #5c5137;
+  --color-warning-text: #b5a072;
+}
