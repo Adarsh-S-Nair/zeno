@@ -47,7 +47,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage supabase={supabase}/>} />
-        <Route element={<MainLayout business={business} />}>
+        <Route element={<MainLayout business={business} supabase={supabase} />}>
           <Route path="/dashboard"
             element={
               <Dashboard

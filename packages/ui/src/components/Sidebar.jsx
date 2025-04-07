@@ -1,32 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { supabase } from '../supabaseClient'
 import { FaUser } from "react-icons/fa"
 import { TiThMenu } from "react-icons/ti"
-import { TbLayoutDashboardFilled } from "react-icons/tb"
-import { MdBusinessCenter, MdInventory, MdSettings, MdLogout } from "react-icons/md"
-import './Sidebar.css'
+import { MdLogout } from "react-icons/md"
+import '../styles/Sidebar.css'
 
-export default function Sidebar({ business }) {
+export default function Sidebar({ navItems = [], supabase, onLogout }) {
   const [isOpen, setIsOpen] = useState(false)
   const sidebarRef = useRef(null)
   const navigate = useNavigate()
   const location = useLocation()
 
-  const navItems = [
-    { icon: <TbLayoutDashboardFilled size={20} />, label: 'Dashboard', path: '/dashboard' },
-    { icon: <MdBusinessCenter size={20} />, label: 'Business', path: '/business' },
-    business && {
-      icon: <MdInventory size={20} />,
-      label: 'Inventory',
-      path: '/inventory',
-    },
-    { icon: <MdSettings size={20} />, label: 'Settings', path: '/settings' },
-  ].filter(Boolean)
-
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/')
+    if (supabase) {
+      await supabase.auth.signOut()
+    }
+    if (onLogout) onLogout()
+    else navigate('/')
   }
 
   useEffect(() => {
@@ -49,15 +39,15 @@ export default function Sidebar({ business }) {
   return (
     <div ref={sidebarRef} className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
-      {isOpen && (
-        <div className="sidebar-user">
+        {isOpen && (
+          <div className="sidebar-user">
             <div className="user-avatar">
-            <FaUser size={20} />
+              <FaUser size={20} />
             </div>
-        </div>
+          </div>
         )}
         <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
-            <TiThMenu size={20} />
+          <TiThMenu size={20} />
         </button>
       </div>
 
@@ -85,3 +75,4 @@ export default function Sidebar({ business }) {
     </div>
   )
 }
+
