@@ -1,4 +1,4 @@
-import { LuUpload } from 'react-icons/lu'
+import { FaUpload } from "react-icons/fa6";
 import { HiDotsVertical } from 'react-icons/hi'
 import {
   MdAccountBalance,
@@ -120,7 +120,7 @@ export default function AccountCard({ name, type, balance, lastUpdated }) {
         <button
           className="appearance-none bg-transparent border-none p-0 m-0 cursor-pointer flex items-center gap-[6px] text-[11px] font-[550] text-[var(--color-primary-light)] hover:text-[var(--color-primary)] transition-colors"
         >
-          <LuUpload size={16} />
+          <FaUpload size={11} />
           Upload CSV
         </button>
       </div>
