@@ -4,6 +4,7 @@
   --color-text: #4d4d4d;
   --color-text-hover: #333333;
   --color-primary: #4d8ef7;    /* modern light blue */
+  --color-primary-light: #65a0fd;
   --color-card: #ffffff;
   --color-inner-card: #fafafa;
   --color-muted: #f0f2f5;
@@ -25,6 +26,7 @@
   --color-text: #bcbcbc;
   --color-text-hover: #818181;
   --color-primary: #40639a;
+  --color-primary-light: #40649d;
   --color-card: #1d1d1d;
   --color-inner-card: #212121;
   --color-muted: #303030;

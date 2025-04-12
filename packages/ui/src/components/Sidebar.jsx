@@ -37,7 +37,7 @@ export default function Sidebar({ navItems = [], supabase, onLogout }) {
   }, [isOpen])
 
   return (
-    <div ref={sidebarRef} className={`sidebar ${isOpen ? 'open' : ''}`}>
+    <aside ref={sidebarRef} className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         {isOpen && (
           <div className="sidebar-user">
@@ -72,7 +72,7 @@ export default function Sidebar({ navItems = [], supabase, onLogout }) {
           {isOpen && <span>Log Out</span>}
         </div>
       </div>
-    </div>
+    </aside>
   )
 }
 
