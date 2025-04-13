@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import MainLayout from './layout/MainLayout'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts';
+import Transactions from './pages/Transactions';
 import { LoginPage } from '@zeno/ui'
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         }>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/accounts" element={<Accounts />} />
+          <Route path="/transactions" element={<Transactions />} />
         </Route>
       </Routes>
     </Router>

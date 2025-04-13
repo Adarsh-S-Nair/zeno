@@ -6,6 +6,7 @@ export default function CustomDropdown({
   onChange,
   options = [],
   placeholder = 'Select...',
+  defaultLabel,
 }) {
   const selected = options.find((opt) => opt.value === value)
 
@@ -16,13 +17,13 @@ export default function CustomDropdown({
       options={options}
       trigger={
         <div
-          className="w-full px-[12px] py-[10px] text-[0.8rem] font-semibold rounded-[8px] bg-[var(--color-inner-card)] text-[var(--color-text)] shadow-sm hover:bg-[var(--color-muted-hover)] transition-all flex items-center justify-between"
+          className="w-full px-[12px] py-[8px] text-[0.7rem] font-[600] rounded-[8px] bg-[var(--color-inner-card)] text-[var(--color-text)] shadow-sm hover:bg-[var(--color-muted-hover)] transition-all flex items-center justify-between"
         >
           <span>
-            {selected ? selected.label : <span className="text-gray-400">{placeholder}</span>}
+            {selected ? selected.label : <span className="text-[var(--color-text-hover)]">{defaultLabel || placeholder}</span>}
           </span>
           <svg
-            className="w-[14px] h-[14px] ml-[8px] text-[var(--color-text-hover)]"
+            className="w-[12px] h-[12px] ml-[8px] text-[var(--color-text-hover)]"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"

@@ -3,6 +3,8 @@
   --color-bg: #f6f8fa;         /* softer off-white */
   --color-text: #4d4d4d;
   --color-text-hover: #333333;
+  --color-text-hover-darker: #272727;
+  --color-primary-darker: #274d8b;
   --color-primary: #4d8ef7;    /* modern light blue */
   --color-primary-light: #65a0fd;
   --color-card: #ffffff;
@@ -10,6 +12,7 @@
   --color-muted: #f0f2f5;
   --color-shadow: rgba(0, 0, 0, 0.05);
   --color-error: #e53935;
+  --color-error-darker: #b72c29;
   --color-disabled: #cccccc;
   --color-primary-hover: #2563eb;
   --color-muted-hover: #e8eaed;
@@ -25,6 +28,8 @@
   --color-bg: #191919;         /* true grayish dark */
   --color-text: #bcbcbc;
   --color-text-hover: #818181;
+  --color-text-hover-darker: #5f5f5f;
+  --color-primary-darker: #294168;
   --color-primary: #40639a;
   --color-primary-light: #40649d;
   --color-card: #1d1d1d;
@@ -32,6 +37,7 @@
   --color-muted: #303030;
   --color-shadow: rgba(0, 0, 0, 0.5);
   --color-error: #ef5350;
+  --color-error-darker: #883432;
   --color-disabled: #3f3f3f;
   --color-primary-hover: #2f4a77;
   --color-muted-hover: #2a2a2a;

@@ -5,7 +5,10 @@ import Modal from '../components/Modal'
 import { MdErrorOutline } from "react-icons/md";
 import { FaFile } from "react-icons/fa6";
 import { MdEdit, MdDelete, MdMoreVert, MdClose } from "react-icons/md";
-import NoAccountsSVG from '../assets/no_accounts_3.svg'
+import NoAccountsSVG from '../assets/no_accounts.svg'
+import { parseCsv } from '../utils/csvParsers';
+import INSTITUTIONS from '../constants/institutions';
+import generateTransactionHash from '../utils/generateTransactionHash';
 
 export default function Accounts() {
   const [accounts, setAccounts] = useState([]);
@@ -68,6 +71,7 @@ export default function Accounts() {
         user_id: user.id,
         name: formData.name,
         type: formData.type,
+        institution: formData.institution,
         balance: 0.0,
       },
     ])
@@ -108,8 +112,72 @@ export default function Accounts() {
   }
 
   async function handleCsvUpload() {
-    console.log("uploading")
+    if (!csvFile || !accountToImportTo) return
+    setUploading(true)
+  
+    try {
+      const text = await csvFile.text()
+      const institution = accountToImportTo.institution
+      const accountType = accountToImportTo.type
+  
+      const { transactions, endingBalance } = parseCsv(text, institution, accountType)
+  
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+  
+      if (authError || !user) throw new Error('Not logged in')
+  
+      const withHashes = await Promise.all(
+        transactions.map(async (t) => {
+          const tx = {
+            ...t,
+            account_id: accountToImportTo.id,
+            user_id: user.id,
+          }
+      
+          const hash = await generateTransactionHash(tx)
+          return { ...tx, hash }
+        })
+      )
+  
+      // 🚫 Remove already existing hashes
+      const hashes = withHashes.map(t => t.hash)
+      const { data: existing, error: selectError } = await supabase
+        .from('transactions')
+        .select('hash')
+        .in('hash', hashes)
+  
+      const existingHashes = new Set(existing?.map(t => t.hash) || [])
+      const newTransactions = withHashes.filter(t => !existingHashes.has(t.hash))
+  
+      if (newTransactions.length > 0) {
+        const { error: insertError } = await supabase.from('transactions').insert(newTransactions)
+        if (insertError) throw insertError
+      }
+  
+      if (endingBalance !== null) {
+        const { error: updateError } = await supabase
+          .from('accounts')
+          .update({ balance: endingBalance })
+          .eq('id', accountToImportTo.id)
+  
+        if (updateError) throw updateError
+      }
+  
+      await fetchAccounts()
+    } catch (err) {
+      console.error('Failed to import CSV:', err)
+      setImportError('Invalid CSV format or upload failed')
+    } finally {
+      setUploading(false)
+      setCsvFile(null)
+      setShowImportModal(false)
+      setAccountToImportTo(null)
+    }
   }
+  
 
   return (
     <>
@@ -177,14 +245,22 @@ export default function Accounts() {
             label: 'Account Type',
             type: 'select',
             required: true,
-            fullWidth: true,
+            fullWidth: false,
             options: [
               { label: 'Checking', value: 'checking' },
               { label: 'Savings', value: 'savings' },
               { label: 'Credit Card', value: 'credit_card' },
               { label: 'Investment', value: 'investment' },
             ],
-          }
+          },
+          {
+            name: 'institution',
+            label: 'Institution',
+            type: 'select',
+            required: true,
+            fullWidth: false,
+            options: INSTITUTIONS,
+          },
         ]}
       />
 
