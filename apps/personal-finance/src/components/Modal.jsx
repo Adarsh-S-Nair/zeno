@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import CustomDropdown from './CustomDropdown';
-import Toast from './Toast';
+import { useState, useEffect, useRef } from 'react'
+import CustomDropdown from './CustomDropdown'
+import Toast from './Toast'
 
 export default function Modal({
   title,
@@ -15,8 +15,9 @@ export default function Modal({
   error = null,
 }) {
   const isFormMode = fields.length > 0
+  const modalRef = useRef(null)
 
-  const [formData, setFormData] = useState(() =>
+  const initialFormState = () =>
     Object.fromEntries(
       fields.map((f) => {
         let val = f.defaultValue !== undefined ? f.defaultValue : ''
@@ -26,17 +27,40 @@ export default function Modal({
         return [f.name, val]
       })
     )
-  )
 
+  const [formData, setFormData] = useState(initialFormState)
   const [formError, setFormError] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  // 💡 reset form state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData(initialFormState())
+      setFormError(null)
+      setLoading(false)
+    }
+  }, [isOpen])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose()
     }
-    if (isOpen) window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [isOpen, onClose])
 
   if (!isOpen) return null
@@ -61,6 +85,9 @@ export default function Modal({
         setFormError(null)
         setLoading(true)
         await onSubmit(formData)
+
+        // ✅ if successful: close modal
+        onClose()
       } catch (err) {
         console.error('Submit failed:', err)
         setFormError('Something went wrong.')
@@ -85,7 +112,10 @@ export default function Modal({
         backdropFilter: 'blur(2px)',
       }}
     >
-      <div className="relative bg-[var(--color-card)] text-[var(--color-text)] w-full max-w-[420px] p-[28px] rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
+      <div
+        ref={modalRef}
+        className="relative bg-[var(--color-card)] text-[var(--color-text)] w-full max-w-[420px] p-[28px] rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
+      >
         <h2 className="text-[1.15rem] font-semibold mb-[16px] text-left">{title}</h2>
 
         <div className="flex flex-col gap-[16px]">
@@ -114,6 +144,7 @@ export default function Modal({
                       <span className="text-[var(--color-error)] ml-[4px]">*</span>
                     )}
                   </label>
+
                   {field.type === 'select' ? (
                     <CustomDropdown
                       value={formData[field.name]}
@@ -128,12 +159,12 @@ export default function Modal({
                       onChange={(e) => handleChange(field.name, e.target.value)}
                       onBlur={() => {
                         if (field.currency) {
-                          const raw = parseFloat(formData[field.name]);
+                          const raw = parseFloat(formData[field.name])
                           if (!isNaN(raw)) {
                             setFormData((prev) => ({
                               ...prev,
                               [field.name]: raw.toFixed(2),
-                            }));
+                            }))
                           }
                         }
                       }}
@@ -151,8 +182,10 @@ export default function Modal({
           ) : (
             children
           )}
-          
-          {displayError && <Toast message={displayError} onClose={() => setFormError(null)} />}
+
+          {displayError && (
+            <Toast message={displayError} onClose={() => setFormError(null)} />
+          )}
         </div>
 
         <div className="flex justify-end gap-[10px] mt-[25px]">
@@ -163,7 +196,9 @@ export default function Modal({
             <button
               type="submit"
               className={`btn ${
-                actionType === 'danger' ? 'btn-danger' : 'btn-primary'
+                actionType === 'danger'
+                  ? 'bg-[var(--color-error-darker)] text-[var(--color-text)] hover:opacity-90'
+                  : 'btn-primary'
               }`}
               onClick={handleSubmit}
               disabled={loading}

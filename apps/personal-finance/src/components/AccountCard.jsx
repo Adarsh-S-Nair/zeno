@@ -1,11 +1,14 @@
-import { FaUpload } from "react-icons/fa6";
+import { FaUpload, FaEdit, FaTrashAlt } from "react-icons/fa"
 import { HiDotsVertical } from 'react-icons/hi'
 import {
   MdAccountBalance,
   MdSavings,
   MdCreditCard,
-  MdTrendingUp
+  MdTrendingUp,
+  MdEdit,
+  MdDelete
 } from 'react-icons/md'
+import DropdownMenu from './DropdownMenu' 
 
 const typeStyles = {
   checking: {
@@ -18,7 +21,7 @@ const typeStyles = {
     bg: 'var(--color-warning-bg)',
     text: 'var(--color-warning-text)',
   },
-  'credit card': {
+  'credit_card': {
     icon: MdCreditCard,
     bg: 'var(--color-negative-bg)',
     text: 'var(--color-negative-text)',
@@ -35,9 +38,16 @@ const typeStyles = {
   },
 }
 
-export default function AccountCard({ name, type, balance, lastUpdated }) {
+export default function AccountCard({ name, type, balance, lastUpdated, onEdit, onDelete, onUpload }) {
   const styles = typeStyles[type] || typeStyles.default
   const Icon = styles.icon
+
+  const formatType = (type) => {
+    return type
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  }
 
   const formattedDate = lastUpdated
     ? new Date(lastUpdated).toLocaleDateString(undefined, {
@@ -48,22 +58,21 @@ export default function AccountCard({ name, type, balance, lastUpdated }) {
     : 'Never'
 
   const formattedBalance = new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(balance)
-    
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(balance)
 
   return (
     <div
       className="p-[20px] rounded-[10px] flex flex-col gap-[12px] transition-[box-shadow] duration-200 ease-in-out"
       style={{
         backgroundColor: 'var(--color-card)',
-        boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.06)', // blurred base
+        boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.06)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = '0px 4px 20px rgba(0, 0, 0, 0.12)' // blurred hover
+        e.currentTarget.style.boxShadow = '0px 4px 20px rgba(0, 0, 0, 0.12)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.boxShadow = '0px 2px 10px rgba(0, 0, 0, 0.06)'
@@ -84,28 +93,40 @@ export default function AccountCard({ name, type, balance, lastUpdated }) {
           <div>
             <div className="text-[16px] font-[600]">{name}</div>
             <div className="text-[13px] font-[600] text-[var(--color-text-hover)] capitalize">
-              {type}
+              {formatType(type)}
             </div>
           </div>
         </div>
 
-        <button
-          className="absolute top-[2px] right-[-10px] p-0 m-0 appearance-none border-none bg-transparent cursor-pointer"
-          style={{
-            color: 'var(--color-text-hover)',
+        <div className="absolute top-[2px] right-[-10px]">
+        <DropdownMenu
+          position="right"
+          width="w-[100px]"
+          trigger={
+            <button className="absolute top-[-16px] right-[-0px] p-0 m-0 appearance-none border-none bg-transparent cursor-pointer text-[var(--color-text-hover)] hover:text-[var(--color-text-hover-darker)] transition-colors">
+              <HiDotsVertical size={18} />
+            </button>
+          }
+          options={[
+            { value: 'edit', label: 'Edit', icon: MdEdit },
+            { value: 'delete', label: 'Delete', icon: MdDelete, danger: true },
+          ]}
+          onSelect={(val) => {
+            if (val === 'edit') onEdit?.()
+            if (val === 'delete') onDelete?.()
           }}
-        >
-          <HiDotsVertical size={18} />
-        </button>
+        />
+        </div>
       </div>
 
       {/* Balance */}
       <div
         className="text-[20px] font-[600]"
         style={{
-          color: balance >= 0
-            ? 'var(--color-positive-text)'
-            : 'var(--color-negative-text)',
+          color:
+            balance >= 0
+              ? 'var(--color-positive-text)'
+              : 'var(--color-negative-text)',
         }}
       >
         {formattedBalance}
@@ -118,7 +139,8 @@ export default function AccountCard({ name, type, balance, lastUpdated }) {
         </div>
 
         <button
-          className="appearance-none bg-transparent border-none p-0 m-0 cursor-pointer flex items-center gap-[6px] text-[11px] font-[550] text-[var(--color-primary-light)] hover:text-[var(--color-primary)] transition-colors"
+          onClick={onUpload}
+          className="appearance-none bg-transparent border-none p-0 m-0 cursor-pointer flex items-center gap-[6px] text-[11px] font-[550] text-[var(--color-primary-light)] hover:text-[var(--color-primary-darker)] transition-colors"
         >
           <FaUpload size={11} />
           Upload CSV

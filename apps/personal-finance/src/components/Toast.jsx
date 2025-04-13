@@ -3,7 +3,7 @@ import { MdClose } from 'react-icons/md'
 
 export default function Toast({ message, onClose }) {
   useEffect(() => {
-    const timer = setTimeout(() => onClose(), 8000) // toast lasts longer now
+    const timer = setTimeout(() => onClose(), 8000)
     return () => clearTimeout(timer)
   }, [onClose])
 
