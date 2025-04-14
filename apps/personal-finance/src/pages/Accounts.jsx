@@ -9,6 +9,7 @@ import NoAccountsSVG from '../assets/no_accounts.svg'
 import { parseCsv } from '../utils/csvParsers';
 import INSTITUTIONS from '../constants/institutions';
 import generateTransactionHash from '../utils/generateTransactionHash';
+import categorizeWithRules from '../utils/categorizer/ruleCategorizer';
 
 export default function Accounts() {
   const [accounts, setAccounts] = useState([]);
@@ -129,32 +130,40 @@ export default function Accounts() {
   
       if (authError || !user) throw new Error('Not logged in')
   
-      const withHashes = await Promise.all(
+      const withHashesAndCategories = await Promise.all(
         transactions.map(async (t) => {
+          const category = categorizeWithRules(t.description)
+  
           const tx = {
             ...t,
+            category,
             account_id: accountToImportTo.id,
             user_id: user.id,
           }
-      
+  
           const hash = await generateTransactionHash(tx)
           return { ...tx, hash }
         })
       )
   
-      // 🚫 Remove already existing hashes
-      const hashes = withHashes.map(t => t.hash)
+      const hashes = withHashesAndCategories.map(t => t.hash)
       const { data: existing, error: selectError } = await supabase
         .from('transactions')
         .select('hash')
         .in('hash', hashes)
   
       const existingHashes = new Set(existing?.map(t => t.hash) || [])
-      const newTransactions = withHashes.filter(t => !existingHashes.has(t.hash))
+      const newTransactions = withHashesAndCategories.filter(t => !existingHashes.has(t.hash))
   
       if (newTransactions.length > 0) {
-        const { error: insertError } = await supabase.from('transactions').insert(newTransactions)
+        const { error: insertError } = await supabase
+          .from('transactions')
+          .insert(newTransactions)
+  
         if (insertError) throw insertError
+        console.log(`✅ Imported ${newTransactions.length} new transactions`)
+      } else {
+        console.log('⚠️ No new transactions added (all were duplicates)')
       }
   
       if (endingBalance !== null) {
@@ -176,7 +185,7 @@ export default function Accounts() {
       setShowImportModal(false)
       setAccountToImportTo(null)
     }
-  }
+  }   
   
 
   return (

@@ -1,0 +1,108 @@
+{
+  "Debt Payment": {
+    "keywords": [
+      "credit card payment",
+      "cardpymt",
+      "bill payment",
+      "loan",
+      "loandepot",
+      "mortgage",
+      "payment to credit",
+      "gemini des:cardpymt"
+    ],
+    "color": "#404040",
+    "textColor": "#bfbfbf"
+  },
+  "Income": {
+    "keywords": [
+      "payroll",
+      "irs treas",
+      "tax refund",
+      "masttaxrfd",
+      "nysttaxrfd",
+      "comm. of mass",
+      "state des",
+      "irs",
+      "credit from"
+    ],
+    "color": "#1e3a28",
+    "textColor": "#a3bfa8"
+  },
+  "Investments": {
+    "keywords": [
+      "robinhood",
+      "etrade",
+      "vanguard",
+      "fidelity",
+      "crypto",
+      "coinbase",
+      "gemini"
+    ],
+    "color": "#00394d",
+    "textColor": "#66d4ff"
+  },
+  "Utilities": {
+    "keywords": [
+      "comcast",
+      "verizon",
+      "xfinity",
+      "national grid",
+      "electric",
+      "internet",
+      "utility"
+    ],
+    "color": "#3e2e00",
+    "textColor": "#ffcc5c"
+  },
+  "Rent": {
+    "keywords": [
+      "apartment",
+      "rent",
+      "lease"
+    ],
+    "color": "#5e002d",
+    "textColor": "#ff9bbf"
+  },
+  "Groceries": {
+    "keywords": [
+      "grocery",
+      "whole foods",
+      "trader joe",
+      "costco",
+      "walmart",
+      "aldi",
+      "kroger",
+      "stop & shop"
+    ],
+    "color": "#2e3e00",
+    "textColor": "#c4ff5c"
+  },
+  "Dining": {
+    "keywords": [
+      "restaurant",
+      "grubhub",
+      "ubereats",
+      "doordash",
+      "mcdonalds",
+      "starbucks",
+      "chipotle",
+      "burger king"
+    ],
+    "color": "#4b2200",
+    "textColor": "#ffc266"
+  },
+  "Transportation": {
+    "keywords": [
+      "uber",
+      "lyft",
+      "gas station",
+      "exxon",
+      "shell",
+      "speedway",
+      "bp",
+      "chevron"
+    ],
+    "color": "#001f2e",
+    "textColor": "#66c2ff"
+  }
+}

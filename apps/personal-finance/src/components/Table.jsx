@@ -1,4 +1,5 @@
-import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md'
+import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
+import categoryStyles from '../utils/categorizer/rules.json';
 
 export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange }) {
   const formatCurrency = (value) => {
@@ -103,6 +104,24 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                     </div>
                   )
                 }
+                if (col.key === 'category') {
+                  const category = row[col.key] || 'Uncategorized'
+                  const rule = categoryStyles[category] || {}
+                  const bg = rule.color || 'var(--color-muted)'
+                  const fg = rule.textColor || 'var(--color-text)'
+                
+                  return (
+                    <div key={col.key} className="flex items-center justify-center">
+                      <span
+                        className="px-[10px] py-[4px] rounded-[12px] text-[10px] font-bold inline-block whitespace-nowrap"
+                        style={{ backgroundColor: bg, color: fg }}
+                      >
+                        {category}
+                      </span>
+                    </div>
+                  )
+                }
+                
                 return (
                   <div key={col.key}>
                     {renderCell(col, row[col.key])}

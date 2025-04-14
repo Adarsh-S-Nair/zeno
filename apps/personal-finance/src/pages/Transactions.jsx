@@ -51,6 +51,7 @@ export default function Transactions() {
         description,
         amount,
         balance,
+        category,
         account_id,
         accounts (name)
       `)
@@ -67,7 +68,7 @@ export default function Transactions() {
         balance: tx.balance,
         account: tx.accounts?.name || 'Unknown',
         type: tx.amount >= 0 ? 'credit' : 'debit',
-        category: '-', // placeholder until categorized
+        category: tx.category || 'Uncategorized',
       }))
       setTransactions(formatted)
     }
