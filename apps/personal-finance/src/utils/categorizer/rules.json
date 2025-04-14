@@ -4,14 +4,20 @@
       "credit card payment",
       "cardpymt",
       "bill payment",
-      "loan",
-      "loandepot",
-      "mortgage",
       "payment to credit",
-      "gemini des:cardpymt"
+      "gemini des:cardpymt",
+      "robinhood card des:payment"
     ],
-    "color": "#404040",
-    "textColor": "#bfbfbf"
+    "color": "#4e2121",
+    "textColor": "#db6161"
+  },
+  "Mortgage": {
+    "keywords": [
+      "loandepot",
+      "mortgage"
+    ],
+    "color": "#3b2f1f",
+    "textColor": "#d3ad87"
   },
   "Income": {
     "keywords": [
@@ -25,21 +31,21 @@
       "irs",
       "credit from"
     ],
-    "color": "#1e3a28",
-    "textColor": "#a3bfa8"
+    "color": "#23523e",
+    "textColor": "#75b178"
   },
-  "Investments": {
+  "Transfers": {
     "keywords": [
-      "robinhood",
-      "etrade",
-      "vanguard",
-      "fidelity",
-      "crypto",
-      "coinbase",
-      "gemini"
+      "robinhood des:funds",
+      "etrade transfer",
+      "vanguard transfer",
+      "fidelity transfer",
+      "coinbase transfer",
+      "internal transfer",
+      "account transfer"
     ],
-    "color": "#00394d",
-    "textColor": "#66d4ff"
+    "color": "#223849",
+    "textColor": "#86b2cc"
   },
   "Utilities": {
     "keywords": [
@@ -47,12 +53,14 @@
       "verizon",
       "xfinity",
       "national grid",
+      "ngrid",
       "electric",
       "internet",
-      "utility"
+      "utility",
+      "sunrun"
     ],
-    "color": "#3e2e00",
-    "textColor": "#ffcc5c"
+    "color": "#2f3d4e",
+    "textColor": "#86a4c5"
   },
   "Rent": {
     "keywords": [
@@ -60,8 +68,8 @@
       "rent",
       "lease"
     ],
-    "color": "#5e002d",
-    "textColor": "#ff9bbf"
+    "color": "#453427",
+    "textColor": "#d6bba0"
   },
   "Groceries": {
     "keywords": [
@@ -74,8 +82,8 @@
       "kroger",
       "stop & shop"
     ],
-    "color": "#2e3e00",
-    "textColor": "#c4ff5c"
+    "color": "#3b4e21",
+    "textColor": "#a8c26a"
   },
   "Dining": {
     "keywords": [
@@ -88,8 +96,8 @@
       "chipotle",
       "burger king"
     ],
-    "color": "#4b2200",
-    "textColor": "#ffc266"
+    "color": "#4e2a1e",
+    "textColor": "#d68f78"
   },
   "Transportation": {
     "keywords": [
@@ -102,7 +110,26 @@
       "bp",
       "chevron"
     ],
-    "color": "#001f2e",
-    "textColor": "#66c2ff"
+    "color": "#26374e",
+    "textColor": "#6d9bd6"
+  },
+  "Savings": {
+    "keywords": [
+      "albert savings",
+      "transfer to savings"
+    ],
+    "color": "#204e3a",
+    "textColor": "#6ddcb1"
+  },
+  "Subscriptions": {
+    "keywords": [
+      "spotify",
+      "netflix",
+      "albert genius",
+      "hulu",
+      "apple music"
+    ],
+    "color": "#3b2a4e",
+    "textColor": "#b78ce6"
   }
 }

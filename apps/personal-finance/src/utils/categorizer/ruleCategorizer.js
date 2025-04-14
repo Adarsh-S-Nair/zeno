@@ -5,17 +5,14 @@ export default function categorizeWithRules(description) {
 
   const lower = description.toLowerCase()
 
-  for (const [category, keywords] of Object.entries(rules)) {
+  for (const [category, rule] of Object.entries(rules)) {
+    const keywords = rule.keywords || []
     for (const keyword of keywords) {
       if (lower.includes(keyword)) {
-        return capitalize(category)
+        return category
       }
     }
   }
 
   return 'Uncategorized'
-}
-
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }

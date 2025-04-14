@@ -87,7 +87,7 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                   const isCredit = row[col.key] === 'credit'
                   return (
                     <div key={col.key} className="flex items-center justify-center">
-                      <span className={`px-[12px] py-[4px] rounded-[12px] text-[10px] font-bold inline-block ${
+                      <span className={`w-[100px] text-center px-[10px] py-[4px] rounded-[9px] text-[10px] font-bold inline-block ${
                         isCredit
                           ? 'bg-[var(--color-positive-bg)] text-[var(--color-positive-text)]'
                           : 'bg-[var(--color-negative-bg)] text-[var(--color-negative-text)]'
@@ -113,7 +113,7 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                   return (
                     <div key={col.key} className="flex items-center justify-center">
                       <span
-                        className="px-[10px] py-[4px] rounded-[12px] text-[10px] font-bold inline-block whitespace-nowrap"
+                        className="w-[100px] text-center px-[10px] py-[4px] rounded-[9px] text-[10px] font-bold inline-block whitespace-nowrap"
                         style={{ backgroundColor: bg, color: fg }}
                       >
                         {category}
