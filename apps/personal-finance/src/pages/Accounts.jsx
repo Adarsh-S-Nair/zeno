@@ -169,11 +169,14 @@ export default function Accounts() {
       if (endingBalance !== null) {
         const { error: updateError } = await supabase
           .from('accounts')
-          .update({ balance: endingBalance })
+          .update({
+            balance: endingBalance,
+            last_updated: new Date().toISOString(),
+          })
           .eq('id', accountToImportTo.id)
-  
+      
         if (updateError) throw updateError
-      }
+      }      
   
       await fetchAccounts()
     } catch (err) {
@@ -221,7 +224,7 @@ export default function Accounts() {
               name={account.name}
               type={account.type}
               balance={account.balance}
-              lastUpdated={account.lastUpdated}
+              lastUpdated={account.last_updated}
               onEdit={() => {
                 setAccountToEdit(account)
                 setShowEditAccountModal(true)

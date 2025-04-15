@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import CustomDropdown from './CustomDropdown'
 import Toast from './Toast'
+import DropdownMenu from './DropdownMenu'
+import { activeDropdownRef } from './DropdownMenu'
 
 export default function Modal({
   title,
@@ -47,7 +49,13 @@ export default function Modal({
     }
 
     const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
+      const clickedInsideDropdown = activeDropdownRef.current?.contains(e.target)
+    
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(e.target) &&
+        !clickedInsideDropdown
+      ) {
         onClose()
       }
     }

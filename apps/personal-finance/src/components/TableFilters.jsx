@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import CustomDropdown from './CustomDropdown'
 import { MdSearch } from 'react-icons/md'
+import { MdOutlineRefresh } from "react-icons/md"
 
 export default function TableFilters({ filters = [] }) {
   const [values, setValues] = useState({})

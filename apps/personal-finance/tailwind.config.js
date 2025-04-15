@@ -21,7 +21,7 @@ export default {
       }
     }
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar')],
   safelist: [
     'fixed',
     'inset-0',

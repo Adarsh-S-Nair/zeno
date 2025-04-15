@@ -1,4 +1,19 @@
 {
+  "Utilities": {
+    "keywords": [
+      "comcast",
+      "verizon",
+      "xfinity",
+      "national grid",
+      "ngrid",
+      "electric",
+      "internet",
+      "utility",
+      "sunrun"
+    ],
+    "color": "#2f3d4e",
+    "textColor": "#86a4c5"
+  },
   "Debt Payment": {
     "keywords": [
       "credit card payment",
@@ -36,6 +51,7 @@
   },
   "Transfers": {
     "keywords": [
+      "albert savings",
       "robinhood des:funds",
       "etrade transfer",
       "vanguard transfer",
@@ -46,21 +62,6 @@
     ],
     "color": "#223849",
     "textColor": "#86b2cc"
-  },
-  "Utilities": {
-    "keywords": [
-      "comcast",
-      "verizon",
-      "xfinity",
-      "national grid",
-      "ngrid",
-      "electric",
-      "internet",
-      "utility",
-      "sunrun"
-    ],
-    "color": "#2f3d4e",
-    "textColor": "#86a4c5"
   },
   "Rent": {
     "keywords": [
@@ -115,7 +116,6 @@
   },
   "Savings": {
     "keywords": [
-      "albert savings",
       "transfer to savings"
     ],
     "color": "#204e3a",
