@@ -10,6 +10,13 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
   const [categoryFilters, setCategoryFilters] = useState({});
   const dropdownRef = useRef(null);
 
+  const columnClass = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-2',
+    3: 'grid-cols-3',
+    4: 'grid-cols-4',
+    5: 'grid-cols-5',
+  }[columns.length] || 'grid-cols-1';
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -32,12 +39,9 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
 
   const getAlignmentClass = (align) => {
     switch (align) {
-      case 'center':
-        return 'text-center';
-      case 'right':
-        return 'text-right';
-      default:
-        return 'text-left';
+      case 'center': return 'text-center';
+      case 'right': return 'text-right';
+      default: return 'text-left';
     }
   };
 
@@ -51,9 +55,8 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden rounded-[10px] shadow-[0_2px_10px_rgba(0,0,0,0.05)] bg-[var(--color-card)]">
-      {/* Header */}
-      <div className={`grid grid-cols-${columns.length} px-[16px] py-[12px] border-b border-[var(--color-muted)] pr-[26px] bg-[var(--color-inner-card)] text-[12px] font-bold capitalize text-[var(--color-text-hover)]`}>
+    <div className="flex flex-col h-full overflow-hidden rounded-[10px] shadow bg-[var(--color-card)]">
+      <div className={`grid ${columnClass} px-[16px] py-[12px] border-b border-[var(--color-muted)] bg-[var(--color-inner-card)] text-[12px] font-bold capitalize text-[var(--color-text-hover)]`}>
         {columns.map((col) => (
           <div key={col.key} className={`${col.width || ''}`}>
             {renderCell(col, col.label, true)}
@@ -61,26 +64,17 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
         ))}
       </div>
 
-      {/* Rows */}
       <div ref={scrollRef} className="flex-1 overflow-auto">
         {rows.length === 0 ? (
           <div className="text-center text-[13px] text-[var(--color-text-hover)] mt-[40px]">No transactions found.</div>
         ) : (
           rows.map((row, idx) => (
-            <div
-              key={idx}
-              className={`grid grid-cols-${columns.length} px-[16px] py-[12px] text-[11px] font-semibold text-[var(--color-text)] border-b border-[var(--color-muted)] hover:bg-[var(--color-muted-hover)] transition`}
-            >
+            <div key={idx} className={`grid ${columnClass} px-[16px] py-[12px] text-[11px] font-semibold text-[var(--color-text)] border-b border-[var(--color-muted)] hover:bg-[var(--color-muted-hover)] transition`}>
               {columns.map((col) => {
                 const cellClass = col.width || '';
                 if (col.key === 'date') {
-                  return (
-                    <div key={col.key} className={cellClass}>
-                      {renderCell(col, formatDate(row[col.key]))}
-                    </div>
-                  );
+                  return <div key={col.key} className={cellClass}>{renderCell(col, formatDate(row[col.key]))}</div>;
                 }
-
                 if (col.key === 'amount') {
                   const amount = parseFloat(row[col.key]);
                   const isPositive = amount >= 0;
@@ -94,19 +88,15 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                     </div>
                   );
                 }
-
                 if (col.key === 'category') {
-                  const category = row.category_override || row.category || 'Uncategorized'
-                  const rule = categoryStyles[category] || {}
-                  const bg = rule.color || 'var(--color-muted)'
-                  const fg = rule.textColor || 'var(--color-text)'
-                  const isEditing = editingCategoryId === row.id
-                
-                  const dropdownOptions = Object.entries(categoryStyles).map(([key]) => ({
-                    label: key,
-                    value: key,
-                  }))
-                
+                  const category = row.category_override || row.category || 'Uncategorized';
+                  const rule = categoryStyles[category] || {};
+                  const bg = rule.color || 'var(--color-muted)';
+                  const fg = rule.textColor || 'var(--color-text)';
+                  const isEditing = editingCategoryId === row.id;
+
+                  const dropdownOptions = Object.entries(categoryStyles).map(([key]) => ({ label: key, value: key }));
+
                   return (
                     <div key={col.key} className={`${col.width || ''} flex items-center justify-center`}>
                       <DropdownMenu
@@ -119,9 +109,7 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                         textFilter={categoryFilters[row.id] || ''}
                         trigger={
                           <span
-                          className={`w-[120px] px-[10px] py-[4px] rounded-[9px] text-[10px] font-bold whitespace-nowrap cursor-pointer transition-all duration-150 relative flex items-center justify-center group ${
-                            isEditing ? 'brightness-[1.35]' : 'hover:brightness-[1.35]'
-                          }`}
+                            className={`w-[120px] px-[10px] py-[4px] rounded-[9px] text-[10px] font-bold whitespace-nowrap cursor-pointer transition-all duration-150 relative flex items-center justify-center group ${isEditing ? 'brightness-[1.35]' : 'hover:brightness-[1.35]'}`}
                             style={{ backgroundColor: bg, color: fg }}
                             onClick={() => {
                               setEditingCategoryId(prev => (prev === row.id ? null : row.id))
@@ -135,68 +123,43 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                           </span>
                         }
                         onSelect={async (selected) => {
-                          const overrideValue = selected === row.category ? null : selected
-                        
+                          const overrideValue = selected === row.category ? null : selected;
                           const { error } = await supabase
                             .from('transactions')
                             .update({ category_override: overrideValue })
-                            .eq('id', row.id)
-                        
+                            .eq('id', row.id);
                           if (!error) {
-                            setTransactions((prev) =>
-                              prev.map((tx) =>
-                                tx.id === row.id ? { ...tx, category_override: overrideValue } : tx
-                              )
-                            )
-                            setEditingCategoryId(null)
+                            setTransactions(prev => prev.map(tx => tx.id === row.id ? { ...tx, category_override: overrideValue } : tx));
+                            setEditingCategoryId(null);
                           } else {
-                            console.error('Failed to update category:', error)
+                            console.error('Failed to update category:', error);
                           }
-                        }}                                                
+                        }}
                         onClose={() => setEditingCategoryId(null)}
                       />
                     </div>
                   )
                 }
-
-                return (
-                  <div key={col.key} className={cellClass}>
-                    {renderCell(col, row[col.key])}
-                  </div>
-                );
+                return <div key={col.key} className={cellClass}>{renderCell(col, row[col.key])}</div>;
               })}
             </div>
           ))
         )}
       </div>
 
-      {/* Footer pagination */}
       <div className="flex justify-between items-center gap-[12px] px-[16px] py-[12px] border-t border-[var(--color-muted)] text-[12px] text-[var(--color-text-hover)]">
         <div className="flex items-center gap-[8px] text-[11px] font-medium">
-          <MdOutlineRefresh
-            size={16}
-            title="Refresh table"
-            className="cursor-pointer hover:text-[var(--color-text)] transition"
-            onClick={onRefresh}
-          />
+          <MdOutlineRefresh size={16} title="Refresh table" className="cursor-pointer hover:text-[var(--color-text)] transition" onClick={onRefresh} />
           <span>
             Viewing {(currentPage - 1) * 20 + 1} – {Math.min(currentPage * 20, totalPages * 20)} of {totalPages * 20}
           </span>
         </div>
         <div className="flex items-center gap-[12px]">
-          <div
-            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-            className={`cursor-pointer transition mt-[2px] ${currentPage === 1 ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}
-          >
+          <div onClick={() => currentPage > 1 && onPageChange(currentPage - 1)} className={`cursor-pointer transition mt-[2px] ${currentPage === 1 ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}>
             <MdArrowBackIosNew size={16} />
           </div>
-          <span className="leading-none mt-[1px]">
-            Page {currentPage} of {totalPages}
-          </span>
-          <div
-            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-            className={`cursor-pointer transition mt-[2px] ${currentPage === totalPages ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}
-          >
+          <span className="leading-none mt-[1px]">Page {currentPage} of {totalPages}</span>
+          <div onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)} className={`cursor-pointer transition mt-[2px] ${currentPage === totalPages ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}>
             <MdArrowForwardIos size={16} />
           </div>
         </div>
