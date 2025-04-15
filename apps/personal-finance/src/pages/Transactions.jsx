@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@zeno/core';
 import TableFilters from '../components/TableFilters';
 import Table from '../components/Table';
-import { MdOutlineRefresh } from "react-icons/md";
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -12,6 +11,19 @@ export default function Transactions() {
 
   const [filterHeight, setFilterHeight] = useState(0);
   const filterRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isExtraSmall, setIsExtraSmall] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setIsExtraSmall(window.innerWidth <= 480);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!filterRef.current) return;
@@ -83,62 +95,60 @@ export default function Transactions() {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-  
+
     if (authError || !user) {
       console.error('Not logged in');
       return;
     }
-  
-    // Fetch all transactions for the user
+
     const { data: transactions, error } = await supabase
       .from('transactions')
       .select('id, description, category, category_override')
       .eq('user_id', user.id);
-  
+
     if (error) {
       console.error('Error fetching transactions for recategorization:', error);
       return;
     }
 
     const { default: categorizeWithRules } = await import('../utils/categorizer/ruleCategorizer.js');
-  
+
     const updates = transactions
-      .filter((tx) => !tx.category_override) // skip manually overridden ones
+      .filter((tx) => !tx.category_override)
       .map((tx) => {
         const newCategory = categorizeWithRules(tx.description);
         return (newCategory !== tx.category) ? { id: tx.id, category: newCategory } : null;
       })
       .filter(Boolean);
-  
+
     if (updates.length > 0) {
       const { error: updateError } = await supabase
         .from('transactions')
         .upsert(updates, { onConflict: 'id' });
-  
+
       if (updateError) {
         console.error('Error updating categories:', updateError);
         return;
       }
-  
+
       console.log(`✅ Updated ${updates.length} transaction categories`);
     } else {
       console.log('✅ All categories are up to date');
     }
-  
-    // Finally, refetch transactions to update the table
+
     await fetchTransactions();
-  }  
+  }
 
   const totalPages = Math.ceil(transactions.length / pageSize);
   const paginatedRows = transactions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const columns = [
     { label: 'Date', key: 'date' },
-    { label: 'Account', key: 'account' },
+    !isMobile && { label: 'Account', key: 'account' },
     { label: 'Description', key: 'description' },
     { label: 'Amount', key: 'amount', align: 'center' },
-    { label: 'Category', key: 'category', align: 'center' },
-  ];
+    !isExtraSmall && { label: 'Category', key: 'category', align: 'center' },
+  ].filter(Boolean);
 
   return (
     <>
