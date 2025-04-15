@@ -193,7 +193,7 @@ export default function Accounts() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-[32px]">
+      <div className="flex justify-between items-center mb-[32px] mt-[12px]">
         <div>
           <h1 className="text-[24px] font-bold leading-tight mb-[4px]">Accounts</h1>
         </div>

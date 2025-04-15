@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@zeno/core';
 import TableFilters from '../components/TableFilters';
+import FilterDrawer from '../components/FilterDrawer.jsx';
 import Table from '../components/Table';
+import { IoFilter } from "react-icons/io5";
 
-export default function Transactions() {
+
+export default function Transactions({ isMobile, setIsMobile}) {
+  const [showFilterDrawer, setShowFilterDrawer] = useState(false);
+  const [filterRowCount, setFilterRowCount] = useState(1);
+
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,12 +17,10 @@ export default function Transactions() {
 
   const [filterHeight, setFilterHeight] = useState(0);
   const filterRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
   const [isExtraSmall, setIsExtraSmall] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
       setIsExtraSmall(window.innerWidth <= 480);
     };
 
@@ -26,22 +30,30 @@ export default function Transactions() {
   }, []);
 
   useEffect(() => {
-    if (!filterRef.current) return;
-
+    if (!filterRef.current || isMobile) return;
+  
     const observer = new ResizeObserver(() => {
-      if (filterRef.current) {
-        setFilterHeight(filterRef.current.offsetHeight);
-      }
+      setFilterHeight(filterRef.current.offsetHeight);
     });
-
+  
     observer.observe(filterRef.current);
-
+  
+    // trigger once on mount or when back on desktop
+    setFilterHeight(filterRef.current.offsetHeight);
+  
     return () => observer.disconnect();
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     fetchTransactions();
   }, []);
+
+  useEffect(() => {
+    if (!isMobile && showFilterDrawer) {
+      setShowFilterDrawer(false)
+    }
+  }, [isMobile])
+  
 
   async function fetchTransactions() {
     setLoading(true);
@@ -150,24 +162,35 @@ export default function Transactions() {
     !isExtraSmall && { label: 'Category', key: 'category', align: 'center' },
   ].filter(Boolean);
 
+  const sharedFilters = [
+    { type: 'search', placeholder: 'Search transactions' },
+    { type: 'dateRange', label: 'Date Range' },
+    { type: 'dropdown', label: 'Account', options: ['All'] },
+    { type: 'amountRange', label: 'Amount Range' },
+  ];
+
   return (
     <>
-      <div className="flex justify-between items-center mb-[32px]">
+      <div className="flex justify-between items-center">
         <h1 className="text-[24px] font-bold leading-tight">Transactions</h1>
+
+        {isMobile && (
+          <div
+            onClick={() => setShowFilterDrawer(true)}
+            className="cursor-pointer p-[6px] rounded-[6px] hover:bg-[var(--color-hover-muted)] transition"
+          >
+            <IoFilter size={20} className="text-[var(--color-text)]" />
+          </div>
+        )}
       </div>
 
-      <div ref={filterRef}>
-        <TableFilters
-          filters={[
-            { type: 'dateRange', label: 'Date Range' },
-            { type: 'dropdown', label: 'Account', options: ['All'] },
-            { type: 'amountRange', label: 'Amount Range' },
-            { type: 'search', placeholder: 'Search transactions' },
-          ]}
-        />
-      </div>
+      {!isMobile && (
+        <div ref={filterRef}>
+          <TableFilters filters={sharedFilters} />
+        </div>
+      )}
 
-      <div className="overflow-y-auto" style={{ height: `calc(100vh - ${filterHeight + 200}px)` }}>
+      <div className="overflow-y-auto" style={{ height: `calc(100vh - ${isMobile ? 140 : filterHeight + 150}px)` }}>
         <Table
           columns={columns}
           rows={paginatedRows}
@@ -178,6 +201,13 @@ export default function Transactions() {
           setTransactions={setTransactions}
         />
       </div>
+
+      <FilterDrawer
+        open={showFilterDrawer}
+        onClose={() => setShowFilterDrawer(false)}
+        isMobile={isMobile}
+        filters={sharedFilters}
+      />
     </>
   );
 }

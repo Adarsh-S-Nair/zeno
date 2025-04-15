@@ -1,13 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import CustomDropdown from './CustomDropdown'
 import { MdSearch } from 'react-icons/md'
-import { MdOutlineRefresh } from "react-icons/md"
+import { MdOutlineRefresh } from 'react-icons/md'
 
-export default function TableFilters({ filters = [] }) {
+export default function TableFilters({ filters = [], onMount, fullHeight = false, isDrawer = false }) {
   const [values, setValues] = useState({})
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    if (onMount && containerRef.current) {
+      onMount(containerRef.current.offsetHeight)
+    }
+  }, [onMount])
 
   const handleChange = (key, val) => {
-    setValues(prev => ({ ...prev, [key]: val }))
+    setValues((prev) => ({ ...prev, [key]: val }))
   }
 
   const sharedInputStyles =
@@ -15,70 +22,82 @@ export default function TableFilters({ filters = [] }) {
 
   return (
     <div
-      className="p-[20px] rounded-[10px] mb-[28px] flex flex-col gap-[16px]"
+      ref={containerRef}
+      className={`rounded-[10px] mb-[28px] flex flex-col gap-[16px] ${
+        fullHeight ? 'h-full' : ''
+      }`}
       style={{
         backgroundColor: 'var(--color-card)',
         boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.04)',
       }}
     >
-      <div className="flex flex-wrap gap-[16px] items-end">
+      <div
+        className={`flex flex-wrap items-end overflow-y-auto ${
+          isDrawer ? 'gap-[12px] w-full p-[5px]' : 'p-[15px] gap-[16px]'
+        }`}
+        style={{ maxHeight: '100%' }}
+      >
         {filters.map((filter, idx) => {
+          const wrapperClass = isDrawer
+            ? 'flex flex-col w-full'
+            : `flex flex-col flex-1 min-w-[${filter.type === 'dateRange' ? '300' : '200'}px]`
+
           switch (filter.type) {
             case 'dateRange':
               return (
-                <div key={idx} className="flex flex-col flex-1 min-w-[300px]">
+                <div key={idx} className={wrapperClass}>
                   <label className="text-[13px] font-medium mb-[4px]">{filter.label}</label>
-                  <div className="flex gap-[6px]">
+                  <div className={`flex gap-[6px] ${isDrawer ? 'w-full' : ''}`}>
                     <input
                       type="date"
                       onChange={(e) => handleChange('startDate', e.target.value)}
                       className={`${sharedInputStyles} flex-1 [&::-webkit-calendar-picker-indicator]:filter-none [&::-webkit-calendar-picker-indicator]:opacity-50`}
-                      style={{ 
+                      style={{
                         colorScheme: 'dark',
                         fontFamily: 'inherit',
                         fontSize: '0.7rem',
                         fontWeight: '600',
-                        '--webkit-calendar-picker-indicator-color': 'var(--color-text-hover)',
                       }}
                     />
                     <input
                       type="date"
                       onChange={(e) => handleChange('endDate', e.target.value)}
                       className={`${sharedInputStyles} flex-1 [&::-webkit-calendar-picker-indicator]:filter-none [&::-webkit-calendar-picker-indicator]:opacity-50`}
-                      style={{ 
+                      style={{
                         colorScheme: 'dark',
                         fontFamily: 'inherit',
                         fontSize: '0.7rem',
                         fontWeight: '600',
-                        '--webkit-calendar-picker-indicator-color': 'var(--color-text-hover)',
                       }}
                     />
                   </div>
                 </div>
               )
+
             case 'dropdown':
               return (
-                <div key={idx} className="flex flex-col flex-1 min-w-[200px]">
+                <div key={idx} className={wrapperClass}>
                   <label className="text-[13px] font-medium mb-[4px]">{filter.label}</label>
                   <CustomDropdown
                     value={values.account}
                     onChange={(val) => handleChange('account', val)}
                     options={[
                       { label: 'All Accounts', value: '' },
-                      ...filter.options.map(opt => ({
+                      ...filter.options.map((opt) => ({
                         label: opt,
-                        value: opt
-                      }))
+                        value: opt,
+                      })),
                     ]}
                     defaultLabel="All Accounts"
                   />
                 </div>
               )
+
             case 'amountRange':
               return (
-                <div key={idx} className="flex flex-col flex-1 min-w-[200px]">
+                <div key={idx} className={wrapperClass}>
                   <label className="text-[13px] font-medium mb-[4px]">{filter.label}</label>
-                  <div className="flex gap-[6px]">
+                  <div className={`flex gap-[6px] ${isDrawer ? 'w-full' : ''}`}>
                     <input
                       type="number"
                       placeholder="Min"
@@ -94,12 +113,16 @@ export default function TableFilters({ filters = [] }) {
                   </div>
                 </div>
               )
+
             case 'search':
               return (
-                <div key={idx} className="flex flex-col flex-1 min-w-[200px]">
+                <div key={idx} className={wrapperClass}>
                   <label className="text-[13px] font-medium mb-[4px]">Search</label>
                   <div className="relative w-full">
-                    <MdSearch className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[var(--color-text-hover)]" size={16} />
+                    <MdSearch
+                      className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[var(--color-text-hover)]"
+                      size={16}
+                    />
                     <input
                       type="text"
                       placeholder={filter.placeholder || 'Search transactions'}
@@ -109,6 +132,7 @@ export default function TableFilters({ filters = [] }) {
                   </div>
                 </div>
               )
+
             default:
               return null
           }
