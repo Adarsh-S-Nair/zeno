@@ -9,7 +9,8 @@
       "electric",
       "internet",
       "utility",
-      "sunrun"
+      "sunrun",
+      "pseg"
     ],
     "color": "#2f3d4e",
     "textColor": "#86a4c5"
@@ -86,7 +87,7 @@
     "color": "#3b4e21",
     "textColor": "#a8c26a"
   },
-  "Dining": {
+  "Food": {
     "keywords": [
       "restaurant",
       "grubhub",
@@ -95,7 +96,20 @@
       "mcdonalds",
       "starbucks",
       "chipotle",
-      "burger king"
+      "burger king",
+      "shahs",
+      "halal",
+      "buffalo wild",
+      "la perla",
+      "kpot",
+      "taco bell",
+      "shake shack",
+      "dunkin",
+      "wingstop",
+      "ramen",
+      "sunoco",
+      "ralph",
+      "jimmys"
     ],
     "color": "#4e2a1e",
     "textColor": "#d68f78"
@@ -109,14 +123,17 @@
       "shell",
       "speedway",
       "bp",
-      "chevron"
+      "chevron",
+      "mta",
+      "lirr"
     ],
     "color": "#26374e",
     "textColor": "#6d9bd6"
   },
-  "Savings": {
+  "Health/Fitness": {
     "keywords": [
-      "transfer to savings"
+      "laf",
+      "la fitness"
     ],
     "color": "#204e3a",
     "textColor": "#6ddcb1"
@@ -127,9 +144,48 @@
       "netflix",
       "albert genius",
       "hulu",
-      "apple music"
+      "apple music",
+      "google one",
+      "google *one",
+      "ai premium",
+      "rblx",
+      "autopilot",
+      "gannett"
     ],
     "color": "#3b2a4e",
     "textColor": "#b78ce6"
+  },
+  "Entertainment": {
+    "keywords": [
+      "amc",
+      "regal",
+      "cinema",
+      "movie theater",
+      "fandango",
+      "netflix ticket",
+      "spotify live",
+      "ticketmaster",
+      "concert",
+      "showtime",
+      "eventbrite",
+      "playhouse",
+      "comedy club",
+      "broadway",
+      "improv",
+      "drive-in",
+      "gaming",
+      "steam",
+      "epic games",
+      "psn",
+      "playstation",
+      "xbox",
+      "roblox",
+      "nintendo",
+      "wb studio",
+      "ripped bodice",
+      "eximbay"
+    ],
+    "color": "#46274e",
+    "textColor": "#e5d77d"
   }
 }

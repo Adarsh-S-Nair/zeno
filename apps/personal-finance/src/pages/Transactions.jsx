@@ -1,158 +1,95 @@
-import { useEffect, useRef, useState } from 'react';
-import { supabase } from '@zeno/core';
-import TableFilters from '../components/TableFilters';
-import FilterDrawer from '../components/FilterDrawer.jsx';
-import Table from '../components/Table';
-import { IoFilter } from "react-icons/io5";
+import { useContext, useEffect, useRef, useState } from 'react'
+import { supabase } from '@zeno/core'
+import { FinanceContext } from '../utils/FinanceContext'
+import TableFilters from '../components/TableFilters'
+import FilterDrawer from '../components/FilterDrawer.jsx'
+import Table from '../components/Table'
+import { IoFilter } from "react-icons/io5"
 
+export default function Transactions({ isMobile, setIsMobile }) {
+  const { transactions, loading, refreshTransactions } = useContext(FinanceContext)
 
-export default function Transactions({ isMobile, setIsMobile}) {
-  const [showFilterDrawer, setShowFilterDrawer] = useState(false);
-  const [filterRowCount, setFilterRowCount] = useState(1);
-
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
-
-  const [filterHeight, setFilterHeight] = useState(0);
-  const filterRef = useRef(null);
-  const [isExtraSmall, setIsExtraSmall] = useState(false);
+  const [showFilterDrawer, setShowFilterDrawer] = useState(false)
+  const [filterHeight, setFilterHeight] = useState(0)
+  const filterRef = useRef(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 20
+  const [isExtraSmall, setIsExtraSmall] = useState(false)
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsExtraSmall(window.innerWidth <= 480);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    const handleResize = () => setIsExtraSmall(window.innerWidth <= 480)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
-    if (!filterRef.current || isMobile) return;
-  
+    if (!filterRef.current || isMobile) return
     const observer = new ResizeObserver(() => {
-      setFilterHeight(filterRef.current.offsetHeight);
-    });
-  
-    observer.observe(filterRef.current);
-  
-    // trigger once on mount or when back on desktop
-    setFilterHeight(filterRef.current.offsetHeight);
-  
-    return () => observer.disconnect();
-  }, [isMobile]);
-
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+      setFilterHeight(filterRef.current.offsetHeight)
+    })
+    observer.observe(filterRef.current)
+    setFilterHeight(filterRef.current.offsetHeight)
+    return () => observer.disconnect()
+  }, [isMobile])
 
   useEffect(() => {
     if (!isMobile && showFilterDrawer) {
       setShowFilterDrawer(false)
     }
   }, [isMobile])
-  
-
-  async function fetchTransactions() {
-    setLoading(true);
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      console.error('Not logged in');
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('transactions')
-      .select(`
-        id,
-        date,
-        description,
-        amount,
-        balance,
-        category,
-        category_override,
-        account_id,
-        accounts (name)
-      `)
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching transactions:', error);
-    } else {
-      const formatted = data.map(tx => ({
-        id: tx.id,
-        date: tx.date,
-        description: tx.description,
-        amount: tx.amount,
-        account: tx.accounts?.name || 'Unknown',
-        category: tx.category || 'Uncategorized',
-        category_override: tx.category_override || null,
-      }));
-      setTransactions(formatted);
-    }
-
-    setLoading(false);
-  }
 
   async function reapplyCategoriesAndRefresh() {
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      console.error('Not logged in');
-      return;
+      console.error('Not logged in')
+      return
     }
 
-    const { data: transactions, error } = await supabase
+    const { data: txs, error } = await supabase
       .from('transactions')
       .select('id, description, category, category_override')
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
 
     if (error) {
-      console.error('Error fetching transactions for recategorization:', error);
-      return;
+      console.error('Error fetching transactions for recategorization:', error)
+      return
     }
 
-    const { default: categorizeWithRules } = await import('../utils/categorizer/ruleCategorizer.js');
+    const { default: categorizeWithRules } = await import('../utils/categorizer/ruleCategorizer.js')
 
-    const updates = transactions
-      .filter((tx) => !tx.category_override)
-      .map((tx) => {
-        const newCategory = categorizeWithRules(tx.description);
-        return (newCategory !== tx.category) ? { id: tx.id, category: newCategory } : null;
+    const updates = txs
+      .filter(tx => !tx.category_override)
+      .map(tx => {
+        const newCategory = categorizeWithRules(tx.description)
+        return newCategory !== tx.category ? { id: tx.id, category: newCategory } : null
       })
-      .filter(Boolean);
+      .filter(Boolean)
 
     if (updates.length > 0) {
       const { error: updateError } = await supabase
         .from('transactions')
-        .upsert(updates, { onConflict: 'id' });
+        .upsert(updates, { onConflict: 'id' })
 
       if (updateError) {
-        console.error('Error updating categories:', updateError);
-        return;
+        console.error('Error updating categories:', updateError)
+        return
       }
 
-      console.log(`✅ Updated ${updates.length} transaction categories`);
+      console.log(`✅ Updated ${updates.length} transaction categories`)
     } else {
-      console.log('✅ All categories are up to date');
+      console.log('✅ All categories are up to date')
     }
 
-    await fetchTransactions();
+    await refreshTransactions()
   }
 
-  const totalPages = Math.ceil(transactions.length / pageSize);
-  const paginatedRows = transactions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const totalPages = Math.ceil((transactions?.length || 0) / pageSize)
+  const paginatedRows = transactions?.slice((currentPage - 1) * pageSize, currentPage * pageSize) || []
 
   const columns = [
     { label: 'Date', key: 'date' },
@@ -160,14 +97,14 @@ export default function Transactions({ isMobile, setIsMobile}) {
     { label: 'Description', key: 'description' },
     { label: 'Amount', key: 'amount', align: 'center' },
     !isExtraSmall && { label: 'Category', key: 'category', align: 'center' },
-  ].filter(Boolean);
+  ].filter(Boolean)
 
   const sharedFilters = [
     { type: 'search', placeholder: 'Search transactions' },
     { type: 'dateRange', label: 'Date Range' },
     { type: 'dropdown', label: 'Account', options: ['All'] },
     { type: 'amountRange', label: 'Amount Range' },
-  ];
+  ]
 
   return (
     <>
@@ -196,9 +133,8 @@ export default function Transactions({ isMobile, setIsMobile}) {
           rows={paginatedRows}
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={setCurrentPage}
           onRefresh={reapplyCategoriesAndRefresh}
-          setTransactions={setTransactions}
         />
       </div>
 
@@ -209,5 +145,5 @@ export default function Transactions({ isMobile, setIsMobile}) {
         filters={sharedFilters}
       />
     </>
-  );
+  )
 }

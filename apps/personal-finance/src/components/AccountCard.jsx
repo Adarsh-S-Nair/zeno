@@ -122,7 +122,7 @@ export default function AccountCard({ name, type, balance, lastUpdated, onEdit, 
           position="right"
           width="w-[100px]"
           trigger={
-            <button className="absolute top-[-10px] right-[-5px] p-0 m-0 appearance-none border-none bg-transparent cursor-pointer text-[var(--color-text-hover)] hover:text-[var(--color-text-hover-darker)] transition-colors">
+            <button className="absolute top-[-0px] right-[0px] p-0 m-0 appearance-none border-none bg-transparent cursor-pointer text-[var(--color-text-hover)] hover:text-[var(--color-text-hover-darker)] transition-colors">
               <HiDotsVertical size={18} />
             </button>
           }

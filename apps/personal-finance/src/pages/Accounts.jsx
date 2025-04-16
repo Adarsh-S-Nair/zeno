@@ -1,63 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { supabase } from '@zeno/core'
+import { FinanceContext } from '../utils/FinanceContext'
 import AccountCard from '../components/AccountCard'
 import Modal from '../components/Modal'
-import { MdErrorOutline } from "react-icons/md";
-import { FaFile } from "react-icons/fa6";
-import { MdEdit, MdDelete, MdMoreVert, MdClose } from "react-icons/md";
+import { MdErrorOutline } from "react-icons/md"
+import { FaFile } from "react-icons/fa6"
+import { MdClose } from "react-icons/md"
 import NoAccountsSVG from '../assets/no_accounts.svg'
-import { parseCsv } from '../utils/csvParsers';
-import INSTITUTIONS from '../constants/institutions';
-import generateTransactionHash from '../utils/generateTransactionHash';
-import categorizeWithRules from '../utils/categorizer/ruleCategorizer';
+import { parseCsv } from '../utils/csvParsers'
+import INSTITUTIONS from '../constants/institutions'
+import generateTransactionHash from '../utils/generateTransactionHash'
+import categorizeWithRules from '../utils/categorizer/ruleCategorizer'
 
 export default function Accounts() {
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const { accounts, loading, refreshAccounts, refreshTransactions } = useContext(FinanceContext)
 
-  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
-  const [showEditAccountModal, setShowEditAccountModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [uploading, setUploading] = useState(false)
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false)
+  const [showEditAccountModal, setShowEditAccountModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
-  
-  const [accountToEdit, setAccountToEdit] = useState(null);
-  const [accountToDelete, setAccountToDelete] = useState(null);
+  const [accountToEdit, setAccountToEdit] = useState(null)
+  const [accountToDelete, setAccountToDelete] = useState(null)
   const [accountToImportTo, setAccountToImportTo] = useState(null)
-
   const [csvFile, setCsvFile] = useState(null)
   const [importError, setImportError] = useState(null)
-
-  useEffect(() => {
-    fetchAccounts()
-  }, [])
-
-  async function fetchAccounts() {
-    setLoading(true)
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      console.error('Not logged in')
-      return
-    }
-
-    const { data, error } = await supabase
-      .from('accounts')
-      .select('*')
-      .eq('user_id', user.id)
-
-    if (error) {
-      console.error('Error fetching accounts:', error)
-    } else {
-      setAccounts(data)
-    }
-
-    setLoading(false)
-  }
 
   async function handleCreateAccount(formData) {
     const {
@@ -79,7 +46,7 @@ export default function Accounts() {
 
     if (error) throw error
 
-    await fetchAccounts()
+    await refreshAccounts()
   }
 
   async function handleEditAccount(updatedData) {
@@ -94,7 +61,7 @@ export default function Accounts() {
   
     setShowEditAccountModal(false)
     setAccountToEdit(null)
-    fetchAccounts() 
+    refreshAccounts() 
   }
 
   async function handleDeleteAccount() {
@@ -109,76 +76,62 @@ export default function Accounts() {
   
     setShowDeleteModal(false)
     setAccountToDelete(null)
-    fetchAccounts()
+    refreshAccounts()
   }
 
   async function handleCsvUpload() {
     if (!csvFile || !accountToImportTo) return
     setUploading(true)
-  
+
     try {
       const text = await csvFile.text()
       const institution = accountToImportTo.institution
       const accountType = accountToImportTo.type
-  
       const { transactions, endingBalance } = parseCsv(text, institution, accountType)
-  
+
       const {
         data: { user },
         error: authError,
       } = await supabase.auth.getUser()
-  
+
       if (authError || !user) throw new Error('Not logged in')
-  
-      const withHashesAndCategories = await Promise.all(
-        transactions.map(async (t) => {
-          const category = categorizeWithRules(t.description)
-  
-          const tx = {
-            ...t,
-            category,
-            account_id: accountToImportTo.id,
-            user_id: user.id,
-          }
-  
-          const hash = await generateTransactionHash(tx)
-          return { ...tx, hash }
-        })
-      )
-  
+
+      const withHashesAndCategories = await Promise.all(transactions.map(async (t) => {
+        const category = categorizeWithRules(t.description)
+        const tx = {
+          ...t,
+          category,
+          account_id: accountToImportTo.id,
+          user_id: user.id,
+        }
+        const hash = await generateTransactionHash(tx)
+        return { ...tx, hash }
+      }))
+
       const hashes = withHashesAndCategories.map(t => t.hash)
-      const { data: existing, error: selectError } = await supabase
+      const { data: existing } = await supabase
         .from('transactions')
         .select('hash')
         .in('hash', hashes)
-  
+
       const existingHashes = new Set(existing?.map(t => t.hash) || [])
       const newTransactions = withHashesAndCategories.filter(t => !existingHashes.has(t.hash))
-  
+
       if (newTransactions.length > 0) {
-        const { error: insertError } = await supabase
-          .from('transactions')
-          .insert(newTransactions)
-  
+        const { error: insertError } = await supabase.from('transactions').insert(newTransactions)
         if (insertError) throw insertError
         console.log(`✅ Imported ${newTransactions.length} new transactions`)
       } else {
         console.log('⚠️ No new transactions added (all were duplicates)')
       }
-  
+
       if (endingBalance !== null) {
         const { error: updateError } = await supabase
           .from('accounts')
-          .update({
-            balance: endingBalance,
-            last_updated: new Date().toISOString(),
-          })
+          .update({ balance: endingBalance, last_updated: new Date().toISOString() })
           .eq('id', accountToImportTo.id)
-      
         if (updateError) throw updateError
-      }      
-  
-      await fetchAccounts()
+      }
     } catch (err) {
       console.error('Failed to import CSV:', err)
       setImportError('Invalid CSV format or upload failed')
@@ -187,9 +140,10 @@ export default function Accounts() {
       setCsvFile(null)
       setShowImportModal(false)
       setAccountToImportTo(null)
+      refreshAccounts()
+      refreshTransactions()
     }
-  }   
-  
+  }
 
   return (
     <>

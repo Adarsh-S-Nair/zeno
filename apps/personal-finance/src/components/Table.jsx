@@ -4,7 +4,7 @@ import categoryStyles from '../utils/categorizer/rules.json';
 import { useRef, useState } from 'react';
 import DropdownMenu from './DropdownMenu';
 
-export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange, onRefresh, setTransactions }) {
+export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange, onRefresh }) {
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const scrollRef = useRef(null);
   const [categoryFilters, setCategoryFilters] = useState({});
@@ -123,16 +123,16 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
                           </span>
                         }
                         onSelect={async (selected) => {
-                          const overrideValue = selected === row.category ? null : selected;
+                          const overrideValue = selected === row.category ? null : selected
                           const { error } = await supabase
                             .from('transactions')
                             .update({ category_override: overrideValue })
-                            .eq('id', row.id);
+                            .eq('id', row.id)
                           if (!error) {
-                            setTransactions(prev => prev.map(tx => tx.id === row.id ? { ...tx, category_override: overrideValue } : tx));
-                            setEditingCategoryId(null);
+                            await onRefresh() 
+                            setEditingCategoryId(null)
                           } else {
-                            console.error('Failed to update category:', error);
+                            console.error('Failed to update category:', error)
                           }
                         }}
                         onClose={() => setEditingCategoryId(null)}
@@ -147,7 +147,7 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
         )}
       </div>
 
-      <div className="flex justify-between items-center gap-[12px] px-[16px] py-[12px] border-t border-[var(--color-muted)] text-[12px] text-[var(--color-text-hover)]">
+      <div className="flex select-none justify-between items-center gap-[12px] px-[16px] py-[12px] border-t border-[var(--color-muted)] text-[12px] text-[var(--color-text-hover)]">
         <div className="flex items-center gap-[8px] text-[11px] font-medium">
           <MdOutlineRefresh size={16} title="Refresh table" className="cursor-pointer hover:text-[var(--color-text)] transition" onClick={onRefresh} />
           <span>
