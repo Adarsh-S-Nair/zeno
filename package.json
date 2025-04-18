@@ -30,6 +30,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "papaparse": "^5.5.2"
+    "papaparse": "^5.5.2",
+    "recharts": "^2.15.2"
   }
 }

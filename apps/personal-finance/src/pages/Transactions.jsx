@@ -7,7 +7,7 @@ import Table from '../components/Table'
 import { IoFilter } from "react-icons/io5"
 
 export default function Transactions({ isMobile, setIsMobile }) {
-  const { transactions, loading, refreshTransactions } = useContext(FinanceContext)
+  const { transactions, accounts, loading, refreshTransactions } = useContext(FinanceContext)
 
   const [showFilterDrawer, setShowFilterDrawer] = useState(false)
   const [filterHeight, setFilterHeight] = useState(0)
@@ -15,6 +15,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
   const [isExtraSmall, setIsExtraSmall] = useState(false)
+  const [filters, setFilters] = useState({})
 
   useEffect(() => {
     const handleResize = () => setIsExtraSmall(window.innerWidth <= 480)
@@ -88,8 +89,19 @@ export default function Transactions({ isMobile, setIsMobile }) {
     await refreshTransactions()
   }
 
-  const totalPages = Math.ceil((transactions?.length || 0) / pageSize)
-  const paginatedRows = transactions?.slice((currentPage - 1) * pageSize, currentPage * pageSize) || []
+  const filtered = transactions?.filter(tx => {
+    const search = filters.search?.toLowerCase()
+    const account = filters.account
+    const str = `${tx.description} ${tx.category_override || tx.category || ''}`.toLowerCase()
+  
+    return (
+      (!search || str.includes(search)) &&
+      (!account || tx.account === account)
+    )
+  }) || []  
+
+  const totalPages = Math.ceil(filtered.length / pageSize)
+  const paginatedRows = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const columns = [
     { label: 'Date', key: 'date' },
@@ -102,7 +114,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
   const sharedFilters = [
     { type: 'search', placeholder: 'Search transactions' },
     { type: 'dateRange', label: 'Date Range' },
-    { type: 'dropdown', label: 'Account', options: ['All'] },
+    { type: 'dropdown', label: 'Account', options: accounts?.map(a => a.name) || [] },
     { type: 'amountRange', label: 'Amount Range' },
   ]
 
@@ -123,7 +135,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
 
       {!isMobile && (
         <div ref={filterRef}>
-          <TableFilters filters={sharedFilters} />
+          <TableFilters filters={sharedFilters} values={filters} onChange={setFilters} />
         </div>
       )}
 
@@ -143,6 +155,8 @@ export default function Transactions({ isMobile, setIsMobile }) {
         onClose={() => setShowFilterDrawer(false)}
         isMobile={isMobile}
         filters={sharedFilters}
+        values={filters}
+        onChange={setFilters}
       />
     </>
   )

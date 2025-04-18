@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { MdOutlineArrowForwardIos } from 'react-icons/md'
 import TableFilters from './TableFilters'
 
-export default function FilterDrawer({ open, onClose, filters, isMobile }) {
+export default function FilterDrawer({ open, onClose, filters, values, onChange, isMobile }) {
   if (!isMobile) return null
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function FilterDrawer({ open, onClose, filters, isMobile }) {
           }}
         >
           <div style={{ height: '100%', padding: '20px' }}>
-            <TableFilters filters={filters} fullHeight isDrawer />
+            <TableFilters filters={filters} values={values} onChange={onChange} fullHeight isDrawer />
           </div>
         </div>
       </div>

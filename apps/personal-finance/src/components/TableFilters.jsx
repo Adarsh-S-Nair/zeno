@@ -3,8 +3,7 @@ import CustomDropdown from './CustomDropdown'
 import { MdSearch } from 'react-icons/md'
 import { MdOutlineRefresh } from 'react-icons/md'
 
-export default function TableFilters({ filters = [], onMount, fullHeight = false, isDrawer = false }) {
-  const [values, setValues] = useState({})
+export default function TableFilters({ filters = [], values = {}, onMount, onChange, fullHeight = false, isDrawer = false }) {
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -14,7 +13,8 @@ export default function TableFilters({ filters = [], onMount, fullHeight = false
   }, [onMount])
 
   const handleChange = (key, val) => {
-    setValues((prev) => ({ ...prev, [key]: val }))
+    const newValues = { ...values, [key]: val }
+    if (onChange) onChange(newValues)
   }
 
   const sharedInputStyles =
@@ -50,6 +50,7 @@ export default function TableFilters({ filters = [], onMount, fullHeight = false
                   <div className={`flex gap-[6px] ${isDrawer ? 'w-full' : ''}`}>
                     <input
                       type="date"
+                      value={values.startDate || ''}
                       onChange={(e) => handleChange('startDate', e.target.value)}
                       className={`${sharedInputStyles} flex-1 [&::-webkit-calendar-picker-indicator]:filter-none [&::-webkit-calendar-picker-indicator]:opacity-50`}
                       style={{
@@ -61,6 +62,7 @@ export default function TableFilters({ filters = [], onMount, fullHeight = false
                     />
                     <input
                       type="date"
+                      value={values.startDate || ''}
                       onChange={(e) => handleChange('endDate', e.target.value)}
                       className={`${sharedInputStyles} flex-1 [&::-webkit-calendar-picker-indicator]:filter-none [&::-webkit-calendar-picker-indicator]:opacity-50`}
                       style={{
@@ -79,7 +81,7 @@ export default function TableFilters({ filters = [], onMount, fullHeight = false
                 <div key={idx} className={wrapperClass}>
                   <label className="text-[13px] font-medium mb-[4px]">{filter.label}</label>
                   <CustomDropdown
-                    value={values.account}
+                    value={values.account || ''}
                     onChange={(val) => handleChange('account', val)}
                     options={[
                       { label: 'All Accounts', value: '' },
@@ -100,12 +102,14 @@ export default function TableFilters({ filters = [], onMount, fullHeight = false
                   <div className={`flex gap-[6px] ${isDrawer ? 'w-full' : ''}`}>
                     <input
                       type="number"
+                      value={values.minAmount || ''}
                       placeholder="Min"
                       onChange={(e) => handleChange('minAmount', e.target.value)}
                       className={`${sharedInputStyles} flex-1`}
                     />
                     <input
                       type="number"
+                      value={values.minAmount || ''}
                       placeholder="Max"
                       onChange={(e) => handleChange('maxAmount', e.target.value)}
                       className={`${sharedInputStyles} flex-1`}
@@ -125,6 +129,7 @@ export default function TableFilters({ filters = [], onMount, fullHeight = false
                     />
                     <input
                       type="text"
+                      value={values.search || ''}
                       placeholder={filter.placeholder || 'Search transactions'}
                       onChange={(e) => handleChange('search', e.target.value)}
                       className={`${sharedInputStyles} w-full pl-[32px] pr-[12px]`}

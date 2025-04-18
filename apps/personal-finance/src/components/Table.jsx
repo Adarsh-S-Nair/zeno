@@ -69,7 +69,7 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
           <div className="text-center text-[13px] text-[var(--color-text-hover)] mt-[40px]">No transactions found.</div>
         ) : (
           rows.map((row, idx) => (
-            <div key={idx} className={`grid ${columnClass} px-[16px] py-[12px] text-[11px] font-semibold text-[var(--color-text)] border-b border-[var(--color-muted)] hover:bg-[var(--color-muted-hover)] transition`}>
+            <div key={idx} className={`grid ${columnClass} h-[48px] px-[16px] py-[12px] text-[11px] font-semibold text-[var(--color-text)] border-b border-[var(--color-muted)] hover:bg-[var(--color-muted-hover)] transition`}>
               {columns.map((col) => {
                 const cellClass = col.width || '';
                 if (col.key === 'date') {
