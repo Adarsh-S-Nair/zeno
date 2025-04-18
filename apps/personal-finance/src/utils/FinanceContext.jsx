@@ -168,6 +168,27 @@ export function FinanceProvider({ children }) {
       return { month: label, income, spending }
     })
 
+  const spendingByCategoryMap = new Map()
+
+  monthlyTransactions.forEach((tx) => {
+    const type = accountTypeMap[tx.accountId] || tx.accountType
+    const category = getEffectiveCategory(tx)
+
+    if (
+      tx.amount < 0 &&
+      category !== 'Transfers' &&
+      !(category === 'Debt Payment' && type !== 'credit_card')
+    ) {
+      const name = category
+      const prev = spendingByCategoryMap.get(name) || 0
+      spendingByCategoryMap.set(name, prev + Math.abs(tx.amount))
+    }
+  })
+
+  const spendingByCategory = Array.from(spendingByCategoryMap.entries())
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+
   return (
     <FinanceContext.Provider value={{
       user,
@@ -180,6 +201,7 @@ export function FinanceProvider({ children }) {
       income,
       spending,
       incomeVsSpendingByMonth,
+      spendingByCategory,
     }}>
       {children}
     </FinanceContext.Provider>

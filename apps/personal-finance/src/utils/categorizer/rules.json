@@ -1,192 +1,62 @@
 {
   "Utilities": {
-    "keywords": [
-      "comcast",
-      "verizon",
-      "xfinity",
-      "national grid",
-      "ngrid",
-      "electric",
-      "internet",
-      "utility",
-      "sunrun",
-      "pseg"
-    ],
-    "color": "#2f3d4e",
-    "textColor": "#86a4c5"
+    "keywords": ["comcast", "verizon", "xfinity", "national grid", "ngrid", "electric", "internet", "utility", "sunrun", "pseg"],
+    "color": "#2a5c7d",
+    "textColor": "#6eb7e7"
   },
   "Debt Payment": {
-    "keywords": [
-      "credit card payment",
-      "cardpymt",
-      "bill payment",
-      "payment to credit",
-      "gemini des:cardpymt",
-      "robinhood card des:payment",
-      "thank you"
-    ],
-    "color": "#4e2121",
-    "textColor": "#db6161"
+    "keywords": ["credit card payment", "cardpymt", "bill payment", "payment to credit", "gemini des:cardpymt", "robinhood card des:payment", "thank you"],
+    "color": "#802d2d",
+    "textColor": "#de7c7c"
   },
   "Mortgage": {
-    "keywords": [
-      "loandepot",
-      "mortgage"
-    ],
-    "color": "#3b2f1f",
-    "textColor": "#d3ad87"
+    "keywords": ["loandepot", "mortgage"],
+    "color": "#5d3c8a",
+    "textColor": "#b79def"
   },
   "Income": {
-    "keywords": [
-      "payroll",
-      "irs treas",
-      "tax refund",
-      "masttaxrfd",
-      "nysttaxrfd",
-      "comm. of mass",
-      "state des",
-      "irs",
-      "credit from"
-    ],
-    "color": "#23523e",
-    "textColor": "#75b178"
+    "keywords": ["payroll", "irs treas", "tax refund", "masttaxrfd", "nysttaxrfd", "comm. of mass", "state des", "irs", "credit from"],
+    "color": "#296e52",
+    "textColor": "#70e3b1"
   },
   "Transfers": {
-    "keywords": [
-      "albert savings",
-      "robinhood des:funds",
-      "etrade transfer",
-      "vanguard transfer",
-      "fidelity transfer",
-      "coinbase transfer",
-      "internal transfer",
-      "account transfer"
-    ],
-    "color": "#223849",
-    "textColor": "#86b2cc"
+    "keywords": ["albert savings", "robinhood des:funds", "etrade transfer", "vanguard transfer", "fidelity transfer", "coinbase transfer", "internal transfer", "account transfer"],
+    "color": "#3b3f77",
+    "textColor": "#9fa5ff"
   },
   "Rent": {
-    "keywords": [
-      "apartment",
-      "rent",
-      "lease"
-    ],
-    "color": "#453427",
-    "textColor": "#d6bba0"
+    "keywords": ["apartment", "rent", "lease"],
+    "color": "#864c7c",
+    "textColor": "#d99ccc"
   },
   "Groceries": {
-    "keywords": [
-      "grocery",
-      "whole foods",
-      "trader joe",
-      "costco",
-      "walmart",
-      "aldi",
-      "kroger",
-      "stop & shop"
-    ],
-    "color": "#3b4e21",
-    "textColor": "#a8c26a"
+    "keywords": ["grocery", "whole foods", "trader joe", "costco", "walmart", "aldi", "kroger", "stop & shop"],
+    "color": "#3c5c2f",
+    "textColor": "#a9dc88"
   },
   "Food": {
-    "keywords": [
-      "restaurant",
-      "grubhub",
-      "ubereats",
-      "doordash",
-      "mcdonalds",
-      "starbucks",
-      "chipotle",
-      "burger king",
-      "shahs",
-      "halal",
-      "buffalo wild",
-      "la perla",
-      "kpot",
-      "taco bell",
-      "shake shack",
-      "dunkin",
-      "wingstop",
-      "ramen",
-      "sunoco",
-      "ralph",
-      "jimmys"
-    ],
-    "color": "#4e2a1e",
-    "textColor": "#d68f78"
+    "keywords": ["restaurant", "grubhub", "ubereats", "doordash", "mcdonalds", "starbucks", "chipotle", "burger king", "shahs", "halal", "buffalo wild", "la perla", "kpot", "taco bell", "shake shack", "dunkin", "wingstop", "ramen", "sunoco", "ralph", "jimmys"],
+    "color": "#a24b30",
+    "textColor": "#ffad8a"
   },
   "Transportation": {
-    "keywords": [
-      "uber",
-      "lyft",
-      "gas station",
-      "exxon",
-      "shell",
-      "speedway",
-      "bp",
-      "chevron",
-      "mta",
-      "lirr"
-    ],
-    "color": "#26374e",
-    "textColor": "#6d9bd6"
+    "keywords": ["uber", "lyft", "gas station", "exxon", "shell", "speedway", "bp", "chevron", "mta", "lirr"],
+    "color": "#2e4a87",
+    "textColor": "#6fa8ff"
   },
   "Health/Fitness": {
-    "keywords": [
-      "laf",
-      "la fitness"
-    ],
-    "color": "#204e3a",
-    "textColor": "#6ddcb1"
+    "keywords": ["laf", "la fitness"],
+    "color": "#1e6a6f",
+    "textColor": "#58d3e1"
   },
   "Subscriptions": {
-    "keywords": [
-      "spotify",
-      "netflix",
-      "albert genius",
-      "hulu",
-      "apple music",
-      "google one",
-      "google *one",
-      "ai premium",
-      "rblx",
-      "autopilot",
-      "gannett"
-    ],
-    "color": "#3b2a4e",
-    "textColor": "#b78ce6"
+    "keywords": ["spotify", "netflix", "albert genius", "hulu", "apple music", "google one", "google *one", "ai premium", "rblx", "autopilot", "gannett"],
+    "color": "#503985",
+    "textColor": "#a68df3"
   },
   "Entertainment": {
-    "keywords": [
-      "amc",
-      "regal",
-      "cinema",
-      "movie theater",
-      "fandango",
-      "netflix ticket",
-      "spotify live",
-      "ticketmaster",
-      "concert",
-      "showtime",
-      "eventbrite",
-      "playhouse",
-      "comedy club",
-      "broadway",
-      "improv",
-      "drive-in",
-      "gaming",
-      "steam",
-      "epic games",
-      "psn",
-      "playstation",
-      "xbox",
-      "roblox",
-      "nintendo",
-      "wb studio",
-      "ripped bodice",
-      "eximbay"
-    ],
-    "color": "#46274e",
-    "textColor": "#e5d77d"
+    "keywords": ["amc", "regal", "cinema", "movie theater", "fandango", "netflix ticket", "spotify live", "ticketmaster", "concert", "showtime", "eventbrite", "playhouse", "comedy club", "broadway", "improv", "drive-in", "gaming", "steam", "epic games", "psn", "playstation", "xbox", "roblox", "nintendo", "wb studio", "ripped bodice", "eximbay"],
+    "color": "#b04f83",
+    "textColor": "#f4add5"
   }
 }

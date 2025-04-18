@@ -2,9 +2,10 @@ import { useContext, useEffect, useState } from 'react'
 import { FinanceContext } from '../utils/FinanceContext'
 import StatCard from '../components/StatCard'
 import IncomeVsSpendingChart from '../charts/IncomeVsSpendingChart'
+import SpendingByCategoryChart from '../charts/SpendingByCategoryChart'
 
 export default function Dashboard() {
-  const { netWorth, income, spending, incomeVsSpendingByMonth } = useContext(FinanceContext)
+  const { netWorth, income, spending, incomeVsSpendingByMonth, spendingByCategory } = useContext(FinanceContext)
 
   const [layout, setLayout] = useState('desktop')
 
@@ -62,7 +63,7 @@ export default function Dashboard() {
             <h2 className="text-[16px] font-semibold mb-[12px]">
               Spending by Category
             </h2>
-            {/* TODO: Pie Chart */}
+            <SpendingByCategoryChart data={spendingByCategory} />
           </div>
         </div>
       ) : (
@@ -94,7 +95,7 @@ export default function Dashboard() {
             <h2 className="text-[16px] font-semibold mb-[12px]">
               Spending by Category
             </h2>
-            {/* TODO: Pie Chart */}
+            <SpendingByCategoryChart data={spendingByCategory} />
           </div>
         </div>
       )}
@@ -105,7 +106,7 @@ export default function Dashboard() {
             <h2 className="text-[16px] font-semibold mb-[12px]">
               Spending by Category
             </h2>
-            {/* TODO: Pie Chart */}
+            <SpendingByCategoryChart data={spendingByCategory} />
           </div>
 
           <div className="px-[20px] rounded-[10px] bg-[var(--color-card)] min-h-[280px]">
