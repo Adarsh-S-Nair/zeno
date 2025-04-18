@@ -105,7 +105,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
 
   const columns = [
     { label: 'Date', key: 'date' },
-    !isMobile && { label: 'Account', key: 'account' },
+    !isMobile && { label: 'Account', key: 'accountName' },
     { label: 'Description', key: 'description' },
     { label: 'Amount', key: 'amount', align: 'center' },
     !isExtraSmall && { label: 'Category', key: 'category', align: 'center' },

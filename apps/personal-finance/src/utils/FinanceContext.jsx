@@ -92,21 +92,18 @@ export function FinanceProvider({ children }) {
   const netWorth = accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0)
 
   const currentDate = new Date()
-  const currentMonth = currentDate.getMonth()
-  const currentYear = currentDate.getFullYear()
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-  const monthlyTransactions = transactions.filter(tx => {
+  const last30DaysTransactions = transactions.filter(tx => {
     const txDate = new Date(tx.date)
-    return (
-      txDate.getMonth() === currentMonth &&
-      txDate.getFullYear() === currentYear
-    )
+    return txDate >= thirtyDaysAgo && txDate <= currentDate
   })
 
   const getEffectiveCategory = (tx) =>
     tx.category_override || tx.category || 'Uncategorized'
 
-  const income = monthlyTransactions
+  const income = last30DaysTransactions
     .filter((tx) => {
       const type = accountTypeMap[tx.accountId] || tx.accountType
       const category = getEffectiveCategory(tx)
@@ -118,7 +115,7 @@ export function FinanceProvider({ children }) {
     })
     .reduce((sum, tx) => sum + tx.amount, 0)
 
-  const spending = monthlyTransactions
+  const spending = last30DaysTransactions
     .filter((tx) => {
       const type = accountTypeMap[tx.accountId] || tx.accountType
       const category = getEffectiveCategory(tx)
@@ -170,7 +167,7 @@ export function FinanceProvider({ children }) {
 
   const spendingByCategoryMap = new Map()
 
-  monthlyTransactions.forEach((tx) => {
+  last30DaysTransactions.forEach((tx) => {
     const type = accountTypeMap[tx.accountId] || tx.accountType
     const category = getEffectiveCategory(tx)
 
