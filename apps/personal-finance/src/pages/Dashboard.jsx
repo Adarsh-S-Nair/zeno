@@ -61,7 +61,7 @@ export default function Dashboard() {
   ]
 
   const ChartCard = (
-    <div className="flex flex-col justify-between px-[20px] rounded-[10px] bg-[var(--color-card)] w-full h-full">
+    <div className="flex flex-col justify-between pl-[20px] pr-[10px] rounded-[10px] bg-[var(--color-card)] w-full h-full">
       <div className="flex items-center justify-between mb-[12px]">
         <h2 className="text-[16px] font-semibold">Income vs Spending</h2>
         <IncomeVsSpendingChart.Toggle
@@ -95,10 +95,10 @@ export default function Dashboard() {
 
   const RecentTransactionsCard = () => (
     <div className="rounded-[10px] bg-[var(--color-card)] w-full h-full flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-[20px]">
+      <div className="flex items-center justify-between pl-[20px] pr-[15px]">
         <h2 className="text-[16px] font-semibold">Recent Transactions</h2>
         <div
-          className="text-[var(--color-text)] cursor-pointer font-[700] text-[12px] px-[12px] py-[6px] rounded-[6px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-colors"
+          className="text-[12px] font-semibold text-[var(--color-link)] hover:underline cursor-pointer transition-all"
           onClick={() => navigate('/transactions')}
         >
           View all
@@ -125,10 +125,10 @@ export default function Dashboard() {
 
   const AccountsCard = () => (
     <div className="rounded-[10px] bg-[var(--color-card)] w-full h-full flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-[20px]">
+      <div className="flex items-center justify-between pl-[20px] pr-[10px]">
         <h2 className="text-[16px] font-semibold">Accounts</h2>
         <div
-          className="text-[var(--color-text)] cursor-pointer font-[700] text-[12px] px-[12px] py-[6px] rounded-[6px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-colors"
+          className="text-[12px] font-semibold text-[var(--color-link)] hover:underline cursor-pointer transition-all"
           onClick={() => navigate('/accounts')}
         >
           View all
@@ -154,7 +154,7 @@ export default function Dashboard() {
 
   const UpcomingBillsCard = () => (
     <div className="rounded-[10px] bg-[var(--color-card)] w-full h-full flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-[20px]">
+      <div className="flex items-center justify-between pl-[20px] pr-[10px]">
         <h2 className="text-[16px] font-semibold">Upcoming Bills</h2>
       </div>
       <div className="flex-1 overflow-auto">
