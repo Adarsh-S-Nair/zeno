@@ -1,8 +1,8 @@
 import {
+  AreaChart,
+  Area,
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -16,13 +16,10 @@ export default function IncomeVsSpendingChart({ data, viewMode }) {
 
   const handleBarClick = (dataPoint) => {
     if (!dataPoint?.month) return
-
     const [monthName, year] = dataPoint.month.split(' ')
     const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth() + 1
-
     const startDate = `${year}-${monthIndex.toString().padStart(2, '0')}-01`
     const endDate = new Date(year, monthIndex, 0).toISOString().split('T')[0]
-
     navigate(`/transactions?startDate=${startDate}&endDate=${endDate}`)
   }
 
@@ -67,7 +64,8 @@ export default function IncomeVsSpendingChart({ data, viewMode }) {
                 fontSize: '12px',
               }}
               formatter={(value, name) => {
-                const formattedName = name === 'income' ? 'Income:' : name === 'spending' ? 'Spending:' : name
+                const formattedName =
+                  name === 'income' ? 'Income:' : name === 'spending' ? 'Spending:' : name
                 const formattedValue = `$${value.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
@@ -91,7 +89,17 @@ export default function IncomeVsSpendingChart({ data, viewMode }) {
             />
           </BarChart>
         ) : (
-          <LineChart data={data}>
+          <AreaChart data={data}>
+            <defs>
+              <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--color-positive)" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="var(--color-positive)" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="spendingGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--color-negative)" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="var(--color-negative)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid stroke="var(--color-muted-hover)" vertical={false} />
             <XAxis
               dataKey="month"
@@ -121,7 +129,8 @@ export default function IncomeVsSpendingChart({ data, viewMode }) {
                 fontSize: '12px',
               }}
               formatter={(value, name) => {
-                const formattedName = name === 'income' ? 'Income:' : name === 'spending' ? 'Spending:' : name
+                const formattedName =
+                  name === 'income' ? 'Income:' : name === 'spending' ? 'Spending:' : name
                 const formattedValue = `$${value.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
@@ -129,23 +138,25 @@ export default function IncomeVsSpendingChart({ data, viewMode }) {
                 return [formattedValue, formattedName]
               }}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="income"
               stroke="var(--color-positive)"
-              strokeWidth={5}
+              strokeWidth={3}
+              fill="url(#incomeGradient)"
               dot={false}
               isAnimationActive={false}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="spending"
               stroke="var(--color-negative)"
-              strokeWidth={5}
+              strokeWidth={3}
+              fill="url(#spendingGradient)"
               dot={false}
               isAnimationActive={false}
             />
-          </LineChart>
+          </AreaChart>
         )}
       </ResponsiveContainer>
     </div>
@@ -156,9 +167,7 @@ IncomeVsSpendingChart.Toggle = function Toggle({ viewMode, setViewMode }) {
   return (
     <div
       className="text-[var(--color-text)] cursor-pointer font-[700] text-[12px] px-[12px] py-[6px] rounded-[6px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-colors"
-      onClick={() =>
-        setViewMode((prev) => (prev === 'line' ? 'bar' : 'line'))
-      }
+      onClick={() => setViewMode((prev) => (prev === 'line' ? 'bar' : 'line'))}
     >
       {viewMode === 'line' ? 'Show Bar' : 'Show Line'}
     </div>

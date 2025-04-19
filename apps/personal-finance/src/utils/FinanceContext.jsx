@@ -186,6 +186,53 @@ export function FinanceProvider({ children }) {
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
 
+  // 🆕 Estimate upcoming bills
+  const upcomingBills = []
+  const billCandidates = {}
+
+  transactions.forEach((tx) => {
+    const category = getEffectiveCategory(tx)
+    if (
+      tx.amount < 0 &&
+      ['Utilities', 'Mortgage', 'Health/Fitness', 'Subscriptions'].includes(category)
+    ) {
+      const desc = tx.description.trim()
+      if (!billCandidates[desc]) billCandidates[desc] = []
+      billCandidates[desc].push(new Date(tx.date))
+    }
+  })
+
+  for (const [description, dates] of Object.entries(billCandidates)) {
+    if (dates.length < 2) continue
+
+    const sorted = dates.sort((a, b) => a - b)
+    let totalInterval = 0
+    for (let i = 1; i < sorted.length; i++) {
+      const diff = (sorted[i] - sorted[i - 1]) / (1000 * 60 * 60 * 24)
+      totalInterval += diff
+    }
+    const avgInterval = totalInterval / (sorted.length - 1)
+
+    const lastDate = sorted[sorted.length - 1]
+    const nextDate = new Date(lastDate)
+    nextDate.setDate(nextDate.getDate() + Math.round(avgInterval))
+
+    const today = new Date()
+    const maxFuture = new Date(today)
+    maxFuture.setDate(maxFuture.getDate() + 60)
+
+    if (nextDate > today && nextDate < maxFuture) {
+      upcomingBills.push({
+        description: description,
+        date: nextDate.toISOString().split('T')[0],
+      })
+    }
+  }
+
+  const sortedUpcomingBills = upcomingBills.sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  )
+
   return (
     <FinanceContext.Provider value={{
       user,
@@ -199,6 +246,7 @@ export function FinanceProvider({ children }) {
       spending,
       incomeVsSpendingByMonth,
       spendingByCategory,
+      upcomingBills: sortedUpcomingBills,
     }}>
       {children}
     </FinanceContext.Provider>

@@ -172,7 +172,9 @@ export default function Accounts() {
         </div>
       ) : (
         <div className="grid gap-[20px] grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
-          {accounts.map((account) => (
+          {[...accounts]
+          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+          .map((account) => (
             <AccountCard
               key={account.id}
               name={account.name}

@@ -135,12 +135,13 @@ export default function Transactions() {
   const paginatedRows = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const columns = [
-    { label: 'Date', key: 'date' },
-    layout === 'desktop' && { label: 'Account', key: 'accountName' },
-    { label: 'Description', key: 'description' },
-    { label: 'Amount', key: 'amount', align: 'center' },
-    !isExtraSmall && { label: 'Category', key: 'category', align: 'center' },
+    { label: 'Date', key: 'date', width: '15%' },
+    layout === 'desktop' && { label: 'Account', key: 'accountName', width: '15%' },
+    { label: 'Description', key: 'description', width: layout === 'desktop' ? '40%' : '50%' },
+    { label: 'Amount', key: 'amount', align: 'center', width: '15%' },
+    !isExtraSmall && { label: 'Category', key: 'category', align: 'center', width: '15%' },
   ].filter(Boolean)
+  
 
   const sharedFilters = [
     { type: 'search', placeholder: 'Search transactions' },

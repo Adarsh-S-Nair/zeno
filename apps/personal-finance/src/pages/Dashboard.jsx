@@ -5,15 +5,18 @@ import StatCard from '../components/StatCard'
 import IncomeVsSpendingChart from '../charts/IncomeVsSpendingChart'
 import SpendingByCategoryChart from '../charts/SpendingByCategoryChart'
 import Table from '../components/Table'
+import { FaBell } from 'react-icons/fa'
 
 export default function Dashboard() {
   const {
     transactions,
+    accounts,
     netWorth,
     income,
     spending,
     incomeVsSpendingByMonth,
     spendingByCategory,
+    upcomingBills,
   } = useContext(FinanceContext)
 
   const navigate = useNavigate()
@@ -91,22 +94,22 @@ export default function Dashboard() {
   )
 
   const RecentTransactionsCard = () => (
-    <div className="rounded-[10px] bg-[var(--color-card)] w-full max-h-[280px] flex flex-col overflow-hidden">
+    <div className="rounded-[10px] bg-[var(--color-card)] w-full h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between px-[20px]">
         <h2 className="text-[16px] font-semibold">Recent Transactions</h2>
         <div
           className="text-[var(--color-text)] cursor-pointer font-[700] text-[12px] px-[12px] py-[6px] rounded-[6px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-colors"
           onClick={() => navigate('/transactions')}
         >
-          {`View all`}
+          View all
         </div>
       </div>
       <div className="flex-1 overflow-auto">
         <Table
           columns={[
-            { label: 'Date', key: 'date' },
-            { label: 'Description', key: 'description' },
-            { label: 'Amount', key: 'amount', align: 'center' },
+            { label: 'Date', key: 'date', width: '20%' },
+            { label: 'Description', key: 'description', width: '60%' },
+            { label: 'Amount', key: 'amount', align: 'right', width: '20%' },
           ]}
           rows={transactions.slice(0, 5)}
           currentPage={1}
@@ -120,9 +123,68 @@ export default function Dashboard() {
     </div>
   )
 
+  const AccountsCard = () => (
+    <div className="rounded-[10px] bg-[var(--color-card)] w-full h-full flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between px-[20px]">
+        <h2 className="text-[16px] font-semibold">Accounts</h2>
+        <div
+          className="text-[var(--color-text)] cursor-pointer font-[700] text-[12px] px-[12px] py-[6px] rounded-[6px] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-colors"
+          onClick={() => navigate('/accounts')}
+        >
+          View all
+        </div>
+      </div>
+      <div className="flex-1 overflow-auto">
+        <Table
+          columns={[
+            { label: 'Account', key: 'name', width: '70%' },
+            { label: 'Amount', key: 'amount', align: 'right', width: '30%' },
+          ]}
+          rows={accounts.slice(0, 5).map(({ balance, ...rest }) => ({ ...rest, amount: balance }))}
+          currentPage={1}
+          totalPages={1}
+          onPageChange={() => {}}
+          onRefresh={() => {}}
+          hideFooter
+          hideHeader
+        />
+      </div>
+    </div>
+  )
+
+  const UpcomingBillsCard = () => (
+    <div className="rounded-[10px] bg-[var(--color-card)] w-full h-full flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between px-[20px]">
+        <h2 className="text-[16px] font-semibold">Upcoming Bills</h2>
+      </div>
+      <div className="flex-1 overflow-auto">
+        <Table
+          columns={[
+            { label: 'Date', key: 'date', width: '40%' },
+            { label: 'Description', key: 'description', width: '60%' }
+          ]}
+          rows={upcomingBills.slice(0, 5)}
+          currentPage={1}
+          totalPages={1}
+          onPageChange={() => {}}
+          onRefresh={() => {}}
+          hideFooter
+          hideHeader
+        />
+      </div>
+    </div>
+  )
+
   return (
     <div className="px-[20px] flex flex-col w-full max-w-[1440px] mx-auto min-h-[calc(100vh-80px)]">
-      <h1 className="text-[24px] font-bold">Dashboard</h1>
+      <div className="flex items-center justify-between mb-[10px]">
+        <h1 className="text-[24px] font-bold">Dashboard</h1>
+        <FaBell
+          size={20}
+          className="text-[var(--color-text)] cursor-pointer hover:text-[var(--color-primary)] transition-colors"
+          title="Notifications"
+        />
+      </div>
 
       <div className="flex-1 flex flex-col justify-center gap-[20px] mb-[30px]">
         {layout === 'desktop' ? (
@@ -140,8 +202,8 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-[1fr_240px_240px] gap-[20px]">
               {RecentTransactionsCard()}
-              {PlaceholderCard('Alerts')}
-              {PlaceholderCard('Upcoming Bills')}
+              {AccountsCard()}
+              {UpcomingBillsCard()}
             </div>
           </div>
         ) : layout === 'tablet' ? (
@@ -155,12 +217,14 @@ export default function Dashboard() {
               <div className="h-full">{CategoryCard}</div>
             </div>
 
-            {ChartCard}
-            {RecentTransactionsCard()}
+            <div className="grid grid-cols-[1fr_220px] gap-[20px] items-start min-h-[300px]">
+              {ChartCard}
+              <div className="h-full">{UpcomingBillsCard()}</div>
+            </div>
 
-            <div className="grid grid-cols-2 gap-[20px]">
-              {PlaceholderCard('Alerts')}
-              {PlaceholderCard('Upcoming Bills')}
+            <div className="grid grid-cols-[300px_1fr] gap-[20px] items-start min-h-[280px]">
+              <div className="h-full">{AccountsCard()}</div>
+              {RecentTransactionsCard()}
             </div>
           </>
         ) : (
@@ -174,8 +238,8 @@ export default function Dashboard() {
             {CategoryCard}
             {ChartCard}
             {RecentTransactionsCard()}
-            {PlaceholderCard('Alerts')}
-            {PlaceholderCard('Upcoming Bills')}
+            {AccountsCard()}
+            {UpcomingBillsCard()}
           </>
         )}
       </div>

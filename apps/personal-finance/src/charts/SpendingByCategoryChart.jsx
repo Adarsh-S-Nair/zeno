@@ -20,9 +20,19 @@ const categoryTextColorMap = Object.entries(rules).reduce((acc, [category, rule]
   return acc
 }, {})
 
+// helper to lighten color
+function lightenColor(hex, amount = 0.3) {
+  let c = hex.replace('#', '')
+  if (c.length === 3) c = c.split('').map((x) => x + x).join('')
+  const num = parseInt(c, 16)
+  const r = Math.min(255, Math.floor((num >> 16) * (1 - amount) + 255 * amount))
+  const g = Math.min(255, Math.floor(((num >> 8) & 0x00ff) * (1 - amount) + 255 * amount))
+  const b = Math.min(255, Math.floor((num & 0x0000ff) * (1 - amount) + 255 * amount))
+  return `rgba(${r}, ${g}, ${b}, 0.6)`
+}
+
 function CustomTooltip({ active, payload }) {
   if (!active || !payload?.length) return null
-
   const { name, value } = payload[0]
   const textColor = categoryTextColorMap[name] || 'var(--color-text)'
 
@@ -48,20 +58,35 @@ function CustomTooltip({ active, payload }) {
 }
 
 const renderActiveShape = (props) => {
-  const RADIAN = Math.PI / 180
   const {
-    cx, cy, midAngle, outerRadius, startAngle, endAngle, fill,
+    cx,
+    cy,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill,
+    payload,
   } = props
+
+  const category = payload.name
+  const glowColor = lightenColor(categoryColorMap[category] || fill, 0.4)
 
   return (
     <Sector
       cx={cx}
       cy={cy}
-      innerRadius={50}
+      innerRadius={innerRadius}
       outerRadius={outerRadius + 8}
       startAngle={startAngle}
       endAngle={endAngle}
       fill={fill}
+      stroke={glowColor}
+      strokeWidth={3}
+      style={{
+        filter: `drop-shadow(0 0 8px ${glowColor})`,
+        transition: 'all 0.25s ease-in-out',
+      }}
     />
   )
 }
@@ -87,22 +112,26 @@ export default function SpendingByCategoryChart({ data = [] }) {
             nameKey="name"
             cx="50%"
             cy="50%"
-            className='cursor-pointer'
             innerRadius={50}
             outerRadius={90}
             paddingAngle={4}
-            isAnimationActive={false}
+            className="cursor-pointer"
             activeIndex={activeIndex}
             activeShape={renderActiveShape}
             onMouseEnter={(_, index) => setActiveIndex(index)}
             onMouseLeave={() => setActiveIndex(null)}
             onClick={handleClick}
+            isAnimationActive={false}
           >
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={categoryColorMap[entry.name] || '#8884d8'}
-                stroke="transparent"
+                stroke="rgba(0,0,0,0.25)"
+                strokeWidth={1}
+                style={{
+                  transition: 'all 0.2s ease-in-out',
+                }}
               />
             ))}
           </Pie>
