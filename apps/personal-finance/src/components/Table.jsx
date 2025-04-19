@@ -4,7 +4,7 @@ import categoryStyles from '../utils/categorizer/rules.json';
 import { useRef, useState } from 'react';
 import DropdownMenu from './DropdownMenu';
 
-export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange, onRefresh }) {
+export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange, onRefresh, hideFooter = false }) {
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const scrollRef = useRef(null);
   const [categoryFilters, setCategoryFilters] = useState({});
@@ -19,13 +19,15 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
   }[columns.length] || 'grid-cols-1';
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    // Avoid timezone shifts by extracting the YYYY-MM-DD part directly
+    const [year, month, day] = dateString.split('T')[0].split('-')
+    const date = new Date(`${year}-${month}-${day}T00:00:00`)
     return date.toLocaleDateString(undefined, {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
-    });
-  };
+      day: 'numeric',
+    })
+  }
 
   const formatCurrency = (value) => {
     if (typeof value !== 'number') return value;
@@ -147,23 +149,26 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
         )}
       </div>
 
-      <div className="flex select-none justify-between items-center gap-[12px] px-[16px] py-[12px] border-t border-[var(--color-muted)] text-[12px] text-[var(--color-text-hover)]">
-        <div className="flex items-center gap-[8px] text-[11px] font-medium">
-          <MdOutlineRefresh size={16} title="Refresh table" className="cursor-pointer hover:text-[var(--color-text)] transition" onClick={onRefresh} />
-          <span>
-            Viewing {(currentPage - 1) * 20 + 1} – {Math.min(currentPage * 20, totalPages * 20)} of {totalPages * 20}
-          </span>
-        </div>
-        <div className="flex items-center gap-[12px]">
-          <div onClick={() => currentPage > 1 && onPageChange(currentPage - 1)} className={`cursor-pointer transition mt-[2px] ${currentPage === 1 ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}>
-            <MdArrowBackIosNew size={16} />
+      {/* Footer */}
+      {!hideFooter && (
+        <div className="flex select-none justify-between items-center gap-[12px] px-[16px] py-[12px] border-t border-[var(--color-muted)] text-[12px] text-[var(--color-text-hover)]">
+          <div className="flex items-center gap-[8px] text-[11px] font-medium">
+            <MdOutlineRefresh size={16} title="Refresh table" className="cursor-pointer hover:text-[var(--color-text)] transition" onClick={onRefresh} />
+            <span>
+              Viewing {(currentPage - 1) * 20 + 1} – {Math.min(currentPage * 20, totalPages * 20)} of {totalPages * 20}
+            </span>
           </div>
-          <span className="leading-none mt-[1px]">Page {currentPage} of {totalPages}</span>
-          <div onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)} className={`cursor-pointer transition mt-[2px] ${currentPage === totalPages ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}>
-            <MdArrowForwardIos size={16} />
+          <div className="flex items-center gap-[12px]">
+            <div onClick={() => currentPage > 1 && onPageChange(currentPage - 1)} className={`cursor-pointer transition mt-[2px] ${currentPage === 1 ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}>
+              <MdArrowBackIosNew size={16} />
+            </div>
+            <span className="leading-none mt-[1px]">Page {currentPage} of {totalPages}</span>
+            <div onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)} className={`cursor-pointer transition mt-[2px] ${currentPage === totalPages ? 'opacity-30 pointer-events-none' : 'hover:text-[var(--color-text)]'}`}>
+              <MdArrowForwardIos size={16} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

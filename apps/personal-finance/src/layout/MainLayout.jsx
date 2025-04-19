@@ -18,7 +18,7 @@ export default function MainLayout({ user, supabase, isMobile }) {
   ]
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-auto">
       <Sidebar
         navItems={navItems}
         supabase={supabase}

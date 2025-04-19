@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import CustomDropdown from './CustomDropdown'
 import { MdSearch } from 'react-icons/md'
 import { MdOutlineRefresh } from 'react-icons/md'
@@ -14,6 +14,28 @@ export default function TableFilters({ filters = [], values = {}, onMount, onCha
 
   const handleChange = (key, val) => {
     const newValues = { ...values, [key]: val }
+
+    // 🧠 smart date logic
+    if (key === 'startDate') {
+      const start = new Date(val)
+      const end = values.endDate ? new Date(values.endDate) : null
+
+      if (!end || start > end) {
+        newValues.endDate = new Date().toISOString().split('T')[0] // today
+      }
+    }
+
+    if (key === 'endDate') {
+      const end = new Date(val)
+      const start = values.startDate ? new Date(values.startDate) : null
+
+      if (!start) {
+        newValues.startDate = val
+      } else if (end < start) {
+        newValues.startDate = val
+      }
+    }
+
     if (onChange) onChange(newValues)
   }
 
@@ -23,9 +45,7 @@ export default function TableFilters({ filters = [], values = {}, onMount, onCha
   return (
     <div
       ref={containerRef}
-      className={`rounded-[10px] mb-[28px] flex flex-col gap-[16px] ${
-        fullHeight ? 'h-full' : ''
-      }`}
+      className={`rounded-[10px] mb-[28px] flex flex-col gap-[16px] ${fullHeight ? 'h-full' : ''}`}
       style={{
         backgroundColor: 'var(--color-card)',
         boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.04)',
@@ -62,7 +82,7 @@ export default function TableFilters({ filters = [], values = {}, onMount, onCha
                     />
                     <input
                       type="date"
-                      value={values.startDate || ''}
+                      value={values.endDate || ''}
                       onChange={(e) => handleChange('endDate', e.target.value)}
                       className={`${sharedInputStyles} flex-1 [&::-webkit-calendar-picker-indicator]:filter-none [&::-webkit-calendar-picker-indicator]:opacity-50`}
                       style={{
@@ -109,7 +129,7 @@ export default function TableFilters({ filters = [], values = {}, onMount, onCha
                     />
                     <input
                       type="number"
-                      value={values.minAmount || ''}
+                      value={values.maxAmount || ''}
                       placeholder="Max"
                       onChange={(e) => handleChange('maxAmount', e.target.value)}
                       className={`${sharedInputStyles} flex-1`}
@@ -135,6 +155,25 @@ export default function TableFilters({ filters = [], values = {}, onMount, onCha
                       className={`${sharedInputStyles} w-full pl-[32px] pr-[12px]`}
                     />
                   </div>
+                </div>
+              )
+
+            case 'categoryDropdown':
+              return (
+                <div key={idx} className={wrapperClass}>
+                  <label className="text-[13px] font-medium mb-[4px]">{filter.label}</label>
+                  <CustomDropdown
+                    value={values.category || ''}
+                    onChange={(val) => handleChange('category', val)}
+                    options={[
+                      { label: 'All Categories', value: '' },
+                      ...filter.options.map((opt) => ({
+                        label: opt,
+                        value: opt,
+                      })),
+                    ]}
+                    defaultLabel="All Categories"
+                  />
                 </div>
               )
 

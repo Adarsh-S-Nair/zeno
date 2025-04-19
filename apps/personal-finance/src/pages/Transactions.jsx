@@ -4,41 +4,60 @@ import { FinanceContext } from '../utils/FinanceContext'
 import TableFilters from '../components/TableFilters'
 import FilterDrawer from '../components/FilterDrawer.jsx'
 import Table from '../components/Table'
-import { IoFilter } from "react-icons/io5"
+import { IoFilter } from 'react-icons/io5'
+import rules from '../utils/categorizer/rules.json'
+import { useSearchParams } from 'react-router-dom'
 
-export default function Transactions({ isMobile, setIsMobile }) {
+export default function Transactions() {
   const { transactions, accounts, loading, refreshTransactions } = useContext(FinanceContext)
+  const [searchParams] = useSearchParams()
+  const initialCategory = searchParams.get('category') || ''
+  const initialStartDate = searchParams.get('startDate') || ''
+  const initialEndDate = searchParams.get('endDate') || ''
 
+  const [layout, setLayout] = useState('desktop')
   const [showFilterDrawer, setShowFilterDrawer] = useState(false)
   const [filterHeight, setFilterHeight] = useState(0)
   const filterRef = useRef(null)
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
   const [isExtraSmall, setIsExtraSmall] = useState(false)
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useState({
+    category: initialCategory,
+    startDate: initialStartDate,
+    endDate: initialEndDate,
+  })
 
   useEffect(() => {
-    const handleResize = () => setIsExtraSmall(window.innerWidth <= 480)
+    const handleResize = () => {
+      const w = window.innerWidth
+      if (w < 640) setLayout('mobile')
+      else if (w < 1024) setLayout('tablet')
+      else setLayout('desktop')
+
+      setIsExtraSmall(w <= 480)
+    }
+
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   useEffect(() => {
-    if (!filterRef.current || isMobile) return
+    if (!filterRef.current || layout !== 'desktop') return
     const observer = new ResizeObserver(() => {
       setFilterHeight(filterRef.current.offsetHeight)
     })
     observer.observe(filterRef.current)
     setFilterHeight(filterRef.current.offsetHeight)
     return () => observer.disconnect()
-  }, [isMobile])
+  }, [layout])
 
   useEffect(() => {
-    if (!isMobile && showFilterDrawer) {
+    if (layout === 'desktop') {
       setShowFilterDrawer(false)
     }
-  }, [isMobile])
+  }, [layout])
 
   async function reapplyCategoriesAndRefresh() {
     const {
@@ -89,23 +108,35 @@ export default function Transactions({ isMobile, setIsMobile }) {
     await refreshTransactions()
   }
 
+  const toDateOnly = (input) => {
+    return new Date(input).toISOString().split('T')[0]
+  }
+
   const filtered = transactions?.filter(tx => {
     const search = filters.search?.toLowerCase()
     const account = filters.account
+    const category = filters.category
+    const startDate = filters.startDate
+    const endDate = filters.endDate
+
+    const txDateOnly = toDateOnly(tx.date)
     const str = `${tx.description} ${tx.category_override || tx.category || ''}`.toLowerCase()
-  
+
     return (
       (!search || str.includes(search)) &&
-      (!account || tx.account === account)
+      (!account || tx.account === account) &&
+      (!category || (tx.category_override || tx.category) === category) &&
+      (!startDate || txDateOnly >= startDate) &&
+      (!endDate || txDateOnly <= endDate)
     )
-  }) || []  
+  }) || []
 
   const totalPages = Math.ceil(filtered.length / pageSize)
   const paginatedRows = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const columns = [
     { label: 'Date', key: 'date' },
-    !isMobile && { label: 'Account', key: 'accountName' },
+    layout === 'desktop' && { label: 'Account', key: 'accountName' },
     { label: 'Description', key: 'description' },
     { label: 'Amount', key: 'amount', align: 'center' },
     !isExtraSmall && { label: 'Category', key: 'category', align: 'center' },
@@ -116,6 +147,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
     { type: 'dateRange', label: 'Date Range' },
     { type: 'dropdown', label: 'Account', options: accounts?.map(a => a.name) || [] },
     { type: 'amountRange', label: 'Amount Range' },
+    { type: 'categoryDropdown', label: 'Category', options: Object.keys(rules) },
   ]
 
   return (
@@ -123,7 +155,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
       <div className="flex justify-between items-center">
         <h1 className="text-[24px] font-bold leading-tight">Transactions</h1>
 
-        {isMobile && (
+        {layout !== 'desktop' && (
           <div
             onClick={() => setShowFilterDrawer(true)}
             className="cursor-pointer p-[6px] rounded-[6px] hover:bg-[var(--color-hover-muted)] transition"
@@ -133,13 +165,13 @@ export default function Transactions({ isMobile, setIsMobile }) {
         )}
       </div>
 
-      {!isMobile && (
+      {layout === 'desktop' && (
         <div ref={filterRef}>
           <TableFilters filters={sharedFilters} values={filters} onChange={setFilters} />
         </div>
       )}
 
-      <div className="overflow-y-auto" style={{ height: `calc(100vh - ${isMobile ? 140 : filterHeight + 150}px)` }}>
+      <div className="overflow-y-auto" style={{ height: `calc(100vh - ${layout === 'desktop' ? filterHeight + 150 : 140}px)` }}>
         <Table
           columns={columns}
           rows={paginatedRows}
@@ -153,7 +185,7 @@ export default function Transactions({ isMobile, setIsMobile }) {
       <FilterDrawer
         open={showFilterDrawer}
         onClose={() => setShowFilterDrawer(false)}
-        isMobile={isMobile}
+        isMobile={layout !== 'desktop'}
         filters={sharedFilters}
         values={filters}
         onChange={setFilters}

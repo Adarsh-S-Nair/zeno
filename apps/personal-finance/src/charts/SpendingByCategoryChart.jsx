@@ -7,6 +7,7 @@ import {
   Sector,
 } from 'recharts'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import rules from '../utils/categorizer/rules.json'
 
 const categoryColorMap = Object.entries(rules).reduce((acc, [category, rule]) => {
@@ -46,17 +47,11 @@ function CustomTooltip({ active, payload }) {
   )
 }
 
-// Optional: adds a subtle bump to active slice
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180
   const {
-    cx, cy, midAngle, outerRadius, startAngle, endAngle, fill, payload, value,
+    cx, cy, midAngle, outerRadius, startAngle, endAngle, fill,
   } = props
-
-  const sin = Math.sin(-RADIAN * midAngle)
-  const cos = Math.cos(-RADIAN * midAngle)
-  const sx = cx + (outerRadius + 8) * cos
-  const sy = cy + (outerRadius + 8) * sin
 
   return (
     <Sector
@@ -73,6 +68,14 @@ const renderActiveShape = (props) => {
 
 export default function SpendingByCategoryChart({ data = [] }) {
   const [activeIndex, setActiveIndex] = useState(null)
+  const navigate = useNavigate()
+
+  const handleClick = (_, index) => {
+    if (data[index]) {
+      const category = data[index].name
+      navigate(`/transactions?category=${encodeURIComponent(category)}`)
+    }
+  }
 
   return (
     <div className="w-full h-[250px]">
@@ -84,14 +87,16 @@ export default function SpendingByCategoryChart({ data = [] }) {
             nameKey="name"
             cx="50%"
             cy="50%"
+            className='cursor-pointer'
             innerRadius={50}
             outerRadius={90}
-            paddingAngle={0}
+            paddingAngle={4}
             isAnimationActive={false}
             activeIndex={activeIndex}
             activeShape={renderActiveShape}
             onMouseEnter={(_, index) => setActiveIndex(index)}
             onMouseLeave={() => setActiveIndex(null)}
+            onClick={handleClick}
           >
             {data.map((entry, index) => (
               <Cell
