@@ -4,7 +4,7 @@ import categoryStyles from '../utils/categorizer/rules.json';
 import { useRef, useState } from 'react';
 import DropdownMenu from './DropdownMenu';
 
-export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange, onRefresh, hideFooter = false }) {
+export default function Table({ columns, rows = [], currentPage, totalPages, onPageChange, onRefresh, hideFooter = false, hideHeader = false}) {
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const scrollRef = useRef(null);
   const [categoryFilters, setCategoryFilters] = useState({});
@@ -56,15 +56,25 @@ export default function Table({ columns, rows = [], currentPage, totalPages, onP
     );
   };
 
+  const borderRadius = !hideHeader && !hideFooter
+  ? 'rounded-[10px]'
+  : hideHeader && hideFooter
+  ? 'rounded-[0px]'
+  : hideHeader
+  ? 'rounded-b-[10px]'
+  : 'rounded-t-[10px]'
+
   return (
-    <div className="flex flex-col h-full overflow-hidden rounded-[10px] shadow bg-[var(--color-card)]">
-      <div className={`grid ${columnClass} px-[16px] py-[12px] border-b border-[var(--color-muted)] bg-[var(--color-inner-card)] text-[12px] font-bold capitalize text-[var(--color-text-hover)]`}>
-        {columns.map((col) => (
-          <div key={col.key} className={`${col.width || ''}`}>
-            {renderCell(col, col.label, true)}
-          </div>
-        ))}
-      </div>
+    <div className={`flex flex-col h-full overflow-hidden ${borderRadius} shadow bg-[var(--color-card)]`}>
+      {!hideHeader && (
+        <div className={`grid ${columnClass} px-[16px] py-[12px] border-b border-[var(--color-muted)] bg-[var(--color-inner-card)] text-[12px] font-bold capitalize text-[var(--color-text-hover)]`}>
+          {columns.map((col) => (
+            <div key={col.key} className={`${col.width || ''}`}>
+              {renderCell(col, col.label, true)}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div ref={scrollRef} className="flex-1 overflow-auto">
         {rows.length === 0 ? (

@@ -114,6 +114,7 @@ export default function Dashboard() {
           onPageChange={() => {}}
           onRefresh={() => {}}
           hideFooter
+          hideHeader
         />
       </div>
     </div>
